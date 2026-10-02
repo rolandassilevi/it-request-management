@@ -119,6 +119,55 @@
     </div>
 </div>
 
+<div class="col">
+    <div class="card shadow-sm h-100">
+        <div class="card-body">
+            <div class="text-muted">Cotations</div>
+            <div class="display-6 fw-bold">
+                {{ quotation_count }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm mt-4">
+    <div class="card-body">
+        <h3>Activité des cotations</h3>
+
+        <div class="row mt-3">
+
+            <div class="col-md-3">
+                <div class="text-muted">Brouillons</div>
+                <div class="fs-3 fw-bold">
+                    {{ quotation_draft_count }}
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="text-muted">Envoyées</div>
+                <div class="fs-3 fw-bold">
+                    {{ quotation_sent_count }}
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="text-muted">Acceptées</div>
+                <div class="fs-3 fw-bold">
+                    {{ quotation_accepted_count }}
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="text-muted">Total</div>
+                <div class="fs-3 fw-bold">
+                    {{ quotation_count }}
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 
 {% comment %} <div class="card mt-4">
     <div class="card-body">

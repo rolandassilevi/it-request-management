@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "apps.organizations.apps.OrganizationsConfig",
     "apps.catalog.apps.CatalogConfig",
     "apps.requests.apps.RequestsConfig",
+    "apps.quotations.apps.QuotationsConfig",
     
 ]
 

@@ -94,6 +94,13 @@
 
                 <td class="text-end">
 
+                    <a
+                        href="{% url 'quotations:quotation_create_from_request' request_obj.pk %}"
+                        class="btn btn-success"
+                    >
+                        Créer une cotation
+                    </a>
+
                     <a href="{% url 'requests:request_item_update' item.pk %}"
                     class="btn btn-sm btn-outline-primary">
                         Modifier

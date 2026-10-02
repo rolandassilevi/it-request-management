@@ -53,4 +53,9 @@ urlpatterns = [
     ),
     
     path("requests/", include("apps.requests.urls")),
+    
+    path(
+        "quotations/",
+        include("apps.quotations.urls"),
+    ),
 ]

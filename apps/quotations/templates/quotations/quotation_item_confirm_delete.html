@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Retirer un produit</h1>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <p>
+            Confirmer le retrait de
+            <strong>{{ item.product.name }}</strong>
+            de la cotation
+            <strong>{{ item.quotation.reference }}</strong> ?
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                class="btn btn-danger"
+            >
+                Retirer
+            </button>
+
+            <a
+                href="{% url 'quotations:quotation_detail' item.quotation.pk %}"
+                class="btn btn-outline-secondary"
+            >
+                Annuler
+            </a>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}
