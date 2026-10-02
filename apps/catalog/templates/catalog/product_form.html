@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Produit</title>
+</head>
+<body>
+    <h1>{% if product %}Modifier{% else %}Ajouter{% endif %} un produit</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Enregistrer</button>
+    </form>
+
+    <p><a href="{% url 'catalog:product_list' %}">Retour au catalogue</a></p>
+</body>
+</html>

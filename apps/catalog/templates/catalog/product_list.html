@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Catalogue ITRequest</title>
+</head>
+<body>
+    <h1>Catalogue des produits</h1>
+
+    <p>
+        <a href="{% url 'catalog:product_create' %}">Ajouter un produit</a> |
+        <a href="{% url 'catalog:category_list' %}">Catégories</a>
+    </p>
+
+    <table border="1" cellpadding="8">
+        <thead>
+            <tr>
+                <th>SKU</th>
+                <th>Produit</th>
+                <th>Catégorie</th>
+                <th>Marque</th>
+                <th>Prix</th>
+                <th>Actif</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>{{ product.sku }}</td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.category }}</td>
+                <td>{{ product.brand }}</td>
+                <td>{{ product.unit_price }}</td>
+                <td>{{ product.is_active }}</td>
+                <td>
+                    <a href="{% url 'catalog:product_update' product.pk %}">
+                        Modifier
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7">Aucun produit.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

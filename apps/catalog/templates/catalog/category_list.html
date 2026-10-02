@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Catégories</title>
+</head>
+<body>
+    <h1>Catégories</h1>
+
+    <a href="{% url 'catalog:category_create' %}">Ajouter une catégorie</a>
+
+    <ul>
+        {% for category in categories %}
+            <li>{{ category.code }} — {{ category.name }}</li>
+        {% empty %}
+            <li>Aucune catégorie.</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'catalog:product_list' %}">Retour aux produits</a>
+</body>
+</html>
