@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     
     # Applications métier ITRequest
     "apps.organizations.apps.OrganizationsConfig",
+    "apps.catalog.apps.CatalogConfig",
     
 ]
 

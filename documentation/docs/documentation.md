@@ -616,3 +616,86 @@ Tests dans les 2 sens:
 Django Shell ──CREATE──► PostgreSQL ──READ──► Django Admin
 
 Django Admin ──CREATE──► PostgreSQL ──SELECT──► psql
+
+*******
+
+P01  Environnement Python/Django             ✓
+P02  Git / branche develop                   ✓
+P03  PostgreSQL + Django                     ✓
+P04  Organizations + Contacts                ✓
+      ├── modèles                            ✓
+      ├── ForeignKey                         ✓
+      ├── migrations                         ✓
+      ├── PostgreSQL                         ✓
+      ├── ORM                                ✓
+      ├── données réelles                    ✓
+      ├── Django Admin                       ✓
+      └── CRUD Django → PostgreSQL            ✓
+
+*******
+
+CATEGORY
+--------
+id
+name
+code
+description
+is_active
+created_at
+updated_at
+
+        1
+        │
+        │ contains
+        │
+        N
+
+PRODUCT
+-------
+id
+category_id
+name
+sku
+brand
+model
+description
+unit_price
+is_active
+created_at
+updated_at
+
+*******
+
+name  = apps.catalog
+        ↑ chemin Python complet
+
+label = catalog
+        ↑ identifiant court Django
+
+*******
+
+product.category
+      ↓
+« Quelle est la catégorie de ce produit ? »
+
+category.products.all()
+      ↓
+« Quels sont tous les produits de cette catégorie ? »
+
+*******
+
+unit_price = models.DecimalField(
+    max_digits=12,
+    decimal_places=2,
+)
+
+decimal_places=2 réserve deux chiffres après la virgule.
+max_digits=12 signifie 12 chiffres maximum au total, et non 12 chiffres avant la virgule.
+
+9999999999.99
+│          │
+10 chiffres 2 chiffres
+             décimaux
+
+= 12 chiffres au total
+
