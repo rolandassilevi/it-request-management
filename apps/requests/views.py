@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .forms import RequestForm, RequestItemForm
 from .models import Request, RequestItem
 
+from django.db.models import Q
 
 @login_required
 def request_list(request):
@@ -11,12 +12,36 @@ def request_list(request):
         Request.objects
         .select_related("organization", "contact", "created_by")
         .all()
+        .order_by("-created_at")
     )
+
+    query = request.GET.get("q", "").strip()
+    status = request.GET.get("status", "").strip()
+
+    if query:
+        requests = requests.filter(
+            Q(reference__icontains=query)
+            | Q(title__icontains=query)
+            | Q(organization__name__icontains=query)
+            | Q(contact__first_name__icontains=query)
+            | Q(contact__last_name__icontains=query)
+        )
+
+    if status:
+        requests = requests.filter(status=status)
+
+    context = {
+        "requests": requests,
+        "query": query,
+        "selected_status": status,
+        "status_choices": Request.Status.choices,
+        "request_count": requests.count(),
+    }
 
     return render(
         request,
         "requests/request_list.html",
-        {"requests": requests},
+        context,
     )
 
 

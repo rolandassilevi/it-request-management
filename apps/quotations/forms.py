@@ -13,10 +13,40 @@ class QuotationForm(forms.ModelForm):
             "valid_until",
             "notes",
         ]
+
         widgets = {
-            "issue_date": forms.DateInput(attrs={"type": "date"}),
-            "valid_until": forms.DateInput(attrs={"type": "date"}),
-            "notes": forms.Textarea(attrs={"rows": 4}),
+            "reference": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Ex. QUO-2026-001",
+                }
+            ),
+            "status": forms.Select(
+                attrs={
+                    "class": "form-select",
+                }
+            ),
+            "issue_date": forms.DateInput(
+                format="%Y-%m-%d",
+                attrs={
+                    "class": "form-control",
+                    "type": "date",
+                },
+            ),
+            "valid_until": forms.DateInput(
+                format="%Y-%m-%d",
+                attrs={
+                    "class": "form-control",
+                    "type": "date",
+                },
+            ),
+            "notes": forms.Textarea(
+                attrs={
+                    "class": "form-control",
+                    "rows": 4,
+                    "placeholder": "Informations complémentaires sur la cotation",
+                }
+            ),
         }
 
 
@@ -29,3 +59,33 @@ class QuotationItemForm(forms.ModelForm):
             "unit_price",
             "notes",
         ]
+
+        widgets = {
+            "product": forms.Select(
+                attrs={
+                    "class": "form-select",
+                }
+            ),
+            "quantity": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "min": 1,
+                    "placeholder": "Ex. 10",
+                }
+            ),
+            "unit_price": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "min": 0,
+                    "step": "0.01",
+                    "placeholder": "0.00",
+                }
+            ),
+            "notes": forms.Textarea(
+                attrs={
+                    "class": "form-control",
+                    "rows": 4,
+                    "placeholder": "Informations complémentaires sur ce produit",
+                }
+            ),
+        }

@@ -4,11 +4,50 @@ from django.shortcuts import get_object_or_404, redirect, render
 from .forms import CategoryForm, ProductForm
 from .models import Category, Product
 
+from django.db import models
+
 
 @login_required
 def product_list(request):
+    query = request.GET.get("q", "").strip()
+    category_id = request.GET.get("category", "").strip()
+    status = request.GET.get("status", "").strip()
+
     products = Product.objects.select_related("category").all()
-    return render(request, "catalog/product_list.html", {"products": products})
+
+    if query:
+        products = products.filter(
+            models.Q(name__icontains=query)
+            | models.Q(sku__icontains=query)
+            | models.Q(brand__icontains=query)
+            | models.Q(model__icontains=query)
+        )
+
+    if category_id:
+        products = products.filter(category_id=category_id)
+
+    if status == "active":
+        products = products.filter(is_active=True)
+    elif status == "inactive":
+        products = products.filter(is_active=False)
+
+    products = products.order_by("name")
+
+    categories = Category.objects.filter(
+        is_active=True
+    ).order_by("name")
+
+    return render(
+        request,
+        "catalog/product_list.html",
+        {
+            "products": products,
+            "categories": categories,
+            "query": query,
+            "selected_category": category_id,
+            "selected_status": status,
+        },
+    )
 
 
 @login_required
@@ -40,13 +79,25 @@ def product_update(request, pk):
 
 @login_required
 def category_list(request):
+    query = request.GET.get("q", "").strip()
+
     categories = Category.objects.all()
+
+    if query:
+        categories = categories.filter(
+            name__icontains=query
+        )
+
+    categories = categories.order_by("name")
+
     return render(
         request,
         "catalog/category_list.html",
-        {"categories": categories},
+        {
+            "categories": categories,
+            "query": query,
+        },
     )
-
 
 @login_required
 def category_create(request):

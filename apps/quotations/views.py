@@ -10,6 +10,8 @@ from .models import Quotation, QuotationItem
 
 from django.contrib import messages
 
+from django.db.models import Q
+
 @login_required
 def quotation_list(request):
     quotations = (
@@ -22,12 +24,28 @@ def quotation_list(request):
         .prefetch_related("items")
     )
 
+    query = request.GET.get("q", "").strip()
+    status = request.GET.get("status", "").strip()
+
+    if query:
+        quotations = quotations.filter(
+            Q(reference__icontains=query)
+            | Q(request__reference__icontains=query)
+            | Q(request__organization__name__icontains=query)
+        )
+
+    if status:
+        quotations = quotations.filter(status=status)
+
+    quotations = quotations.order_by("-issue_date", "-id")
+
     return render(
         request,
         "quotations/quotation_list.html",
-        {"quotations": quotations},
+        {
+            "quotations": quotations,
+        },
     )
-
 
 @login_required
 def quotation_detail(request, pk):
