@@ -41,6 +41,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    
+    # Applications métier ITRequest
+    "apps.organizations.apps.OrganizationsConfig",
+    
 ]
 
 MIDDLEWARE = [
