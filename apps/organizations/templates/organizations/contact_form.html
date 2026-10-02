@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }} | ITRequest{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1 class="h3 mb-1">{{ page_title }}</h1>
+        <p class="text-muted mb-0">
+            Contact associé à une organisation
+        </p>
+    </div>
+</div>
+
+<div class="card form-card">
+
+    <div class="card-body">
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <div class="row">
+
+                {% for field in form %}
+
+                    <div class="col-md-6 mb-3">
+
+                        {% if field.field.widget.input_type == "checkbox" %}
+
+                            <div class="form-check mt-4">
+                                {{ field }}
+
+                                <label
+                                    class="form-check-label"
+                                    for="{{ field.id_for_label }}"
+                                >
+                                    {{ field.label }}
+                                </label>
+                            </div>
+
+                        {% else %}
+
+                            <label
+                                class="form-label"
+                                for="{{ field.id_for_label }}"
+                            >
+                                {{ field.label }}
+                            </label>
+
+                            {{ field }}
+
+                        {% endif %}
+
+                        {% for error in field.errors %}
+                            <div class="text-danger small">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+            <button class="btn btn-primary">
+                Enregistrer
+            </button>
+
+            <a
+                href="{% url 'organizations:organization_list' %}"
+                class="btn btn-outline-secondary"
+            >
+                Annuler
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

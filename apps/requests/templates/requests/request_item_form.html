@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>{{ page_title|default:"Ajouter un produit" }}</h2>
+
+<p class="text-muted">
+    Demande {{ request_obj.reference }}
+</p>
+
+<div class="card shadow-sm">
+
+    <div class="card-body">
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <button class="btn btn-primary">
+                {% if form.instance.pk %}
+                    Enregistrer
+                {% else %}
+                    Ajouter
+                {% endif %}
+            </button>
+
+            <a href="{% url 'requests:request_detail' request_obj.pk %}"
+               class="btn btn-outline-secondary">
+                Annuler
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

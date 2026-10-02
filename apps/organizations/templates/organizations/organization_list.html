@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Organisations | ITRequest{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1 class="h3 mb-1">Organisations</h1>
+        <p class="text-muted mb-0">
+            Clients et structures enregistrés
+        </p>
+    </div>
+
+    <a
+        href="{% url 'organizations:organization_create' %}"
+        class="btn btn-primary"
+    >
+        + Nouvelle organisation
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+
+                <thead class="table-light">
+                    <tr>
+                        <th>Organisation</th>
+                        <th>Type</th>
+                        <th>Ville</th>
+                        <th>Pays</th>
+                        <th>Contacts</th>
+                        <th>Statut</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                {% for organization in organizations %}
+
+                    <tr>
+                        <td class="fw-semibold">
+                            {{ organization.name }}
+                        </td>
+
+                        <td>
+                            {{ organization.get_organization_type_display }}
+                        </td>
+
+                        <td>{{ organization.city|default:"—" }}</td>
+
+                        <td>{{ organization.country|default:"—" }}</td>
+
+                        <td>
+                            {{ organization.contacts.count }}
+                        </td>
+
+                        <td>
+                            {% if organization.is_active %}
+                                <span class="badge text-bg-success">
+                                    Active
+                                </span>
+                            {% else %}
+                                <span class="badge text-bg-secondary">
+                                    Inactive
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td class="text-end">
+                            <a
+                                href="{% url 'organizations:organization_detail' organization.pk %}"
+                                class="btn btn-sm btn-outline-primary"
+                            >
+                                Consulter
+                            </a>
+                        </td>
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td
+                            colspan="7"
+                            class="text-center text-muted py-4"
+                        >
+                            Aucune organisation enregistrée.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

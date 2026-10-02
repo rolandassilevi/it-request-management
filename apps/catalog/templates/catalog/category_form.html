@@ -1,16 +1,82 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Catégorie</title>
-</head>
-<body>
-    <h1>Ajouter une catégorie</h1>
+{% extends "base.html" %}
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Enregistrer</button>
-    </form>
-</body>
-</html>
+{% block title %}Catégorie | ITRequest{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h1 class="h3 mb-1">
+            {% if form.instance.pk %}
+                Modifier la catégorie
+            {% else %}
+                Nouvelle catégorie
+            {% endif %}
+        </h1>
+
+        <p class="text-muted mb-0">
+            Classification du matériel
+        </p>
+    </div>
+
+</div>
+
+<div class="card form-card">
+
+    <div class="card-body">
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% for field in form %}
+
+                <div class="mb-3">
+
+                    {% if field.field.widget.input_type == "checkbox" %}
+
+                        <div class="form-check">
+                            {{ field }}
+
+                            <label class="form-check-label"
+                                   for="{{ field.id_for_label }}">
+                                {{ field.label }}
+                            </label>
+                        </div>
+
+                    {% else %}
+
+                        <label class="form-label"
+                               for="{{ field.id_for_label }}">
+                            {{ field.label }}
+                        </label>
+
+                        {{ field }}
+
+                    {% endif %}
+
+                    {% for error in field.errors %}
+                        <div class="text-danger small">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+            {% endfor %}
+
+            <button class="btn btn-primary">
+                Enregistrer
+            </button>
+
+            <a href="{% url 'catalog:category_list' %}"
+               class="btn btn-outline-secondary">
+                Annuler
+            </a>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

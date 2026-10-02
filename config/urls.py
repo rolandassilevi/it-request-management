@@ -16,9 +16,41 @@ Including another URLconf
 """
 
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.urls import include, path
+
+from .views import dashboard
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("catalog/", include("apps.catalog.urls")),
+
+    path(
+        "login/",
+        auth_views.LoginView.as_view(),
+        name="login",
+    ),
+
+    path(
+        "logout/",
+        auth_views.LogoutView.as_view(),
+        name="logout",
+    ),
+
+    path(
+        "",
+        dashboard,
+        name="dashboard",
+    ),
+
+    path(
+        "catalog/",
+        include("apps.catalog.urls"),
+    ),
+    
+    path(
+        "organizations/",
+        include("apps.organizations.urls"),
+    ),
+    
+    path("requests/", include("apps.requests.urls")),
 ]

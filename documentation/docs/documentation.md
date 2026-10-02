@@ -699,3 +699,17 @@ max_digits=12 signifie 12 chiffres maximum au total, et non 12 chiffres avant la
 
 = 12 chiffres au total
 
+*******
+
+Organization
+     │
+     ├── Contact
+     │
+     └── Request
+            │
+            └── RequestItem
+                    │
+                    └── Product
+                           │
+                           └── Category
+

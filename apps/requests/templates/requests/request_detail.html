@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-start mb-4">
+
+    <div>
+        <h2>{{ request_obj.reference }}</h2>
+        <p class="text-muted">
+            {{ request_obj.title }}
+        </p>
+    </div>
+
+    <a href="{% url 'requests:request_update' request_obj.pk %}"
+       class="btn btn-outline-primary">
+        Modifier
+    </a>
+
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+
+        <div class="row">
+
+            <div class="col-md-4">
+                <strong>Organisation</strong>
+                <p>{{ request_obj.organization }}</p>
+            </div>
+
+            <div class="col-md-4">
+                <strong>Contact</strong>
+                <p>{{ request_obj.contact }}</p>
+            </div>
+
+            <div class="col-md-4">
+                <strong>Statut</strong>
+                <p>
+                    <span class="badge text-bg-primary">
+                        {{ request_obj.get_status_display }}
+                    </span>
+                </p>
+            </div>
+
+        </div>
+
+        <strong>Description</strong>
+        <p>{{ request_obj.description|default:"—" }}</p>
+
+    </div>
+</div>
+
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+
+    <h3>Produits demandés</h3>
+
+    <a href="{% url 'requests:request_item_create' request_obj.pk %}"
+       class="btn btn-primary">
+        + Ajouter un produit
+    </a>
+
+</div>
+
+
+<div class="card shadow-sm">
+
+    <table class="table table-hover align-middle mb-0">
+
+        <thead class="table-light">
+            <tr>
+                <th>SKU</th>
+                <th>Produit</th>
+                <th>Quantité</th>
+                <th>Notes</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        {% for item in request_obj.items.all %}
+
+            <tr>
+                <td>{{ item.product.sku }}</td>
+
+                <td>
+                    <strong>{{ item.product.name }}</strong>
+                </td>
+
+                <td>{{ item.quantity }}</td>
+
+                <td>{{ item.notes|default:"—" }}</td>
+
+                <td class="text-end">
+
+                    <a href="{% url 'requests:request_item_update' item.pk %}"
+                    class="btn btn-sm btn-outline-primary">
+                        Modifier
+                    </a>
+
+                    <a href="{% url 'requests:request_item_delete' item.pk %}"
+                    class="btn btn-sm btn-outline-danger">
+                        Retirer
+                    </a>
+
+                </td>
+            </tr>
+
+        {% empty %}
+
+            <tr>
+                <td colspan="5"
+                    class="text-center text-muted py-4">
+                    Aucun produit ajouté.
+                </td>
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}

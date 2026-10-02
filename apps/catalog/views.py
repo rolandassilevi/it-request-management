@@ -57,3 +57,25 @@ def category_create(request):
         return redirect("catalog:category_list")
 
     return render(request, "catalog/category_form.html", {"form": form})
+
+@login_required
+def category_update(request, pk):
+    category = get_object_or_404(Category, pk=pk)
+
+    if request.method == "POST":
+        form = CategoryForm(request.POST, instance=category)
+
+        if form.is_valid():
+            form.save()
+            return redirect("catalog:category_list")
+    else:
+        form = CategoryForm(instance=category)
+
+    return render(
+        request,
+        "catalog/category_form.html",
+        {
+            "form": form,
+            "category": category,
+        },
+    )

@@ -1,0 +1,56 @@
+body {
+    background-color: #f5f7fa;
+}
+
+.navbar-brand {
+    letter-spacing: 0.4px;
+}
+
+.sidebar {
+    min-height: calc(100vh - 56px);
+    background-color: #212529;
+}
+
+.sidebar .nav-link {
+    color: #ced4da;
+    padding: 0.7rem 1.25rem;
+}
+
+.sidebar .nav-link:hover {
+    color: #ffffff;
+    background-color: #343a40;
+}
+
+.sidebar-heading {
+    color: #6c757d;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 1.25rem 1.25rem 0.4rem;
+    letter-spacing: 0.08rem;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.card {
+    border: 0;
+    box-shadow: 0 0.125rem 0.35rem rgba(0, 0, 0, 0.075);
+}
+
+.table thead th {
+    white-space: nowrap;
+}
+
+.form-card {
+    max-width: 900px;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 430px;
+}

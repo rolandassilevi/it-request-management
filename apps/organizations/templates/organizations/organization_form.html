@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title }} | ITRequest{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1 class="h3 mb-1">{{ page_title }}</h1>
+        <p class="text-muted mb-0">
+            Informations de l'organisation
+        </p>
+    </div>
+</div>
+
+<div class="card form-card">
+    <div class="card-body">
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="row">
+
+                {% for field in form %}
+
+                    <div class="{% if field.name == 'description' %}col-12{% else %}col-md-6{% endif %} mb-3">
+
+                        {% if field.field.widget.input_type == "checkbox" %}
+
+                            <div class="form-check mt-4">
+                                {{ field }}
+                                <label
+                                    class="form-check-label"
+                                    for="{{ field.id_for_label }}"
+                                >
+                                    {{ field.label }}
+                                </label>
+                            </div>
+
+                        {% else %}
+
+                            <label
+                                for="{{ field.id_for_label }}"
+                                class="form-label"
+                            >
+                                {{ field.label }}
+                            </label>
+
+                            {{ field }}
+
+                        {% endif %}
+
+                        {% for error in field.errors %}
+                            <div class="text-danger small">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+            <div class="d-flex gap-2">
+
+                <button class="btn btn-primary">
+                    Enregistrer
+                </button>
+
+                <a
+                    href="{% url 'organizations:organization_list' %}"
+                    class="btn btn-outline-secondary"
+                >
+                    Annuler
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

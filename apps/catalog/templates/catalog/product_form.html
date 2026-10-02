@@ -1,18 +1,87 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Produit</title>
-</head>
-<body>
-    <h1>{% if product %}Modifier{% else %}Ajouter{% endif %} un produit</h1>
+{% extends "base.html" %}
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Enregistrer</button>
-    </form>
+{% block title %}Produit | ITRequest{% endblock %}
 
-    <p><a href="{% url 'catalog:product_list' %}">Retour au catalogue</a></p>
-</body>
-</html>
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1 class="h3 mb-1">
+            {% if form.instance.pk %}
+                Modifier le produit
+            {% else %}
+                Nouveau produit
+            {% endif %}
+        </h1>
+
+        <p class="text-muted mb-0">
+            Informations du produit
+        </p>
+    </div>
+</div>
+
+<div class="card form-card">
+    <div class="card-body">
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="row">
+
+                {% for field in form %}
+
+                    <div class="{% if field.name == 'description' %}col-12{% else %}col-md-6{% endif %} mb-3">
+
+                        {% if field.field.widget.input_type == "checkbox" %}
+
+                            <div class="form-check mt-4">
+                                {{ field }}
+
+                                <label class="form-check-label"
+                                       for="{{ field.id_for_label }}">
+                                    {{ field.label }}
+                                </label>
+                            </div>
+
+                        {% else %}
+
+                            <label class="form-label"
+                                   for="{{ field.id_for_label }}">
+                                {{ field.label }}
+                            </label>
+
+                            {{ field }}
+
+                        {% endif %}
+
+                        {% for error in field.errors %}
+                            <div class="text-danger small">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+            <div class="d-flex gap-2">
+
+                <button class="btn btn-primary">
+                    Enregistrer
+                </button>
+
+                <a href="{% url 'catalog:product_list' %}"
+                   class="btn btn-outline-secondary">
+                    Annuler
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

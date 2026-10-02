@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block title %}{{ organization.name }} | ITRequest{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h1 class="h3 mb-1">
+            {{ organization.name }}
+        </h1>
+
+        <span class="text-muted">
+            {{ organization.get_organization_type_display }}
+        </span>
+    </div>
+
+    <div class="d-flex gap-2">
+
+        <a
+            href="{% url 'organizations:organization_update' organization.pk %}"
+            class="btn btn-outline-primary"
+        >
+            Modifier
+        </a>
+
+        <form
+            method="post"
+            action="{% url 'organizations:organization_toggle_active' organization.pk %}"
+        >
+            {% csrf_token %}
+
+            <button class="btn btn-outline-secondary">
+                {% if organization.is_active %}
+                    Désactiver
+                {% else %}
+                    Réactiver
+                {% endif %}
+            </button>
+        </form>
+
+    </div>
+
+</div>
+
+
+<div class="row g-4">
+
+    <div class="col-lg-5">
+
+        <div class="card h-100">
+            <div class="card-body">
+
+                <h2 class="h5 mb-3">
+                    Informations
+                </h2>
+
+                <dl class="row mb-0">
+
+                    <dt class="col-sm-5">Immatriculation</dt>
+                    <dd class="col-sm-7">
+                        {{ organization.registration_number|default:"—" }}
+                    </dd>
+
+                    <dt class="col-sm-5">Adresse</dt>
+                    <dd class="col-sm-7">
+                        {{ organization.address|default:"—" }}
+                    </dd>
+
+                    <dt class="col-sm-5">Ville</dt>
+                    <dd class="col-sm-7">
+                        {{ organization.city|default:"—" }}
+                    </dd>
+
+                    <dt class="col-sm-5">Pays</dt>
+                    <dd class="col-sm-7">
+                        {{ organization.country|default:"—" }}
+                    </dd>
+
+                    <dt class="col-sm-5">Téléphone</dt>
+                    <dd class="col-sm-7">
+                        {{ organization.phone|default:"—" }}
+                    </dd>
+
+                    <dt class="col-sm-5">Email</dt>
+                    <dd class="col-sm-7">
+                        {{ organization.email|default:"—" }}
+                    </dd>
+
+                </dl>
+
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="col-lg-7">
+
+        <div class="card">
+
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+
+                <h2 class="h5 mb-0">
+                    Contacts
+                </h2>
+
+                <a
+                    href="{% url 'organizations:contact_create' %}?organization={{ organization.pk }}"
+                    class="btn btn-sm btn-primary"
+                >
+                    + Ajouter
+                </a>
+
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="table align-middle mb-0">
+
+                    <thead class="table-light">
+                        <tr>
+                            <th>Nom</th>
+                            <th>Fonction</th>
+                            <th>Email</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for contact in organization.contacts.all %}
+
+                        <tr>
+
+                            <td>
+                                {{ contact.first_name }}
+                                {{ contact.last_name }}
+
+                                {% if contact.is_primary %}
+                                    <span class="badge text-bg-primary">
+                                        Principal
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {{ contact.job_title|default:"—" }}
+                            </td>
+
+                            <td>
+                                {{ contact.email|default:"—" }}
+                            </td>
+
+                            <td class="text-end">
+                                <a
+                                    href="{% url 'organizations:contact_update' contact.pk %}"
+                                    class="btn btn-sm btn-outline-secondary"
+                                >
+                                    Modifier
+                                </a>
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+                            <td
+                                colspan="4"
+                                class="text-center text-muted py-4"
+                            >
+                                Aucun contact.
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

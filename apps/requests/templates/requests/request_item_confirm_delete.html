@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Retirer un produit</h2>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <p>
+            Confirmer le retrait de
+            <strong>{{ item.product.name }}</strong>
+            de la demande
+            <strong>{{ item.request.reference }}</strong> ?
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <button class="btn btn-danger">
+                Retirer
+            </button>
+
+            <a href="{% url 'requests:request_detail' item.request.pk %}"
+               class="btn btn-outline-secondary">
+                Annuler
+            </a>
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

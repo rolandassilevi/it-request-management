@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Tableau de bord | ITRequest{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1 class="h3 mb-1">Tableau de bord</h1>
+
+        <p class="text-muted mb-0">
+            Vue générale de l'activité ITRequest
+        </p>
+    </div>
+</div>
+
+
+<div class="row g-4">
+
+    <div class="col-sm-6 col-xl-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-muted">Organisations</div>
+
+                <div class="display-6 fw-bold">
+                    {{ organization_count }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-sm-6 col-xl-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-muted">Contacts</div>
+
+                <div class="display-6 fw-bold">
+                    {{ contact_count }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-sm-6 col-xl-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-muted">Catégories</div>
+
+                <div class="display-6 fw-bold">
+                    {{ category_count }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-sm-6 col-xl-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="text-muted">Produits</div>
+
+                <div class="display-6 fw-bold">
+                    {{ product_count }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-5 g-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <div class="text-muted">Demandes</div>
+
+                <div class="display-6 fw-bold">
+                    {{ request_count }}
+                </div>
+
+                <a href="{% url 'requests:request_list' %}"
+                class="stretched-link">
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="card shadow-sm mt-4">
+    <div class="card-body">
+
+        <h4>Activité des demandes</h4>
+
+        <div class="row mt-3">
+
+            <div class="col-md-4">
+                <div class="text-muted">Nouvelles</div>
+                <div class="fs-3 fw-bold">
+                    {{ new_request_count }}
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="text-muted">En cours</div>
+                <div class="fs-3 fw-bold">
+                    {{ in_progress_request_count }}
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="text-muted">Total</div>
+                <div class="fs-3 fw-bold">
+                    {{ request_count }}
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+{% comment %} <div class="card mt-4">
+    <div class="card-body">
+
+        <h2 class="h5">
+            État du MVP
+        </h2>
+
+        <p class="mb-0">
+            Les modules Organisations et Catalogue sont connectés
+            à PostgreSQL.
+        </p>
+
+    </div>
+</div> {% endcomment %}
+
+{% endblock %}
