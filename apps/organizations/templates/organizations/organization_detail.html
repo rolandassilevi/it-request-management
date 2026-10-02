@@ -4,24 +4,69 @@
 
 {% block content %}
 
-<div class="page-header">
+<!-- =========================================================
+     FIL D'ARIANE
+========================================================= -->
 
-    <div>
-        <h1 class="h3 mb-1">
-            {{ organization.name }}
-        </h1>
+<div class="structure-breadcrumb mb-3">
+    <a href="{% url 'organizations:organization_list' %}">
+        Structures
+    </a>
 
-        <span class="text-muted">
-            {{ organization.get_organization_type_display }}
-        </span>
+    <i class="bi bi-chevron-right"></i>
+
+    <span>{{ organization.name }}</span>
+</div>
+
+
+<!-- =========================================================
+     EN-TÊTE STRUCTURE
+========================================================= -->
+
+<div class="structure-detail-header">
+
+    <div class="structure-detail-identity">
+
+        <div class="structure-detail-icon">
+            <i class="bi bi-buildings"></i>
+        </div>
+
+        <div>
+
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+
+                <h1 class="h3 mb-0">
+                    {{ organization.name }}
+                </h1>
+
+                {% if organization.is_active %}
+                    <span class="status-badge status-active">
+                        Active
+                    </span>
+                {% else %}
+                    <span class="status-badge status-inactive">
+                        Inactive
+                    </span>
+                {% endif %}
+
+            </div>
+
+            <p class="text-muted mb-0 mt-1">
+                {{ organization.get_organization_type_display }}
+            </p>
+
+        </div>
+
     </div>
 
-    <div class="d-flex gap-2">
+
+    <div class="d-flex gap-2 flex-wrap">
 
         <a
             href="{% url 'organizations:organization_update' organization.pk %}"
-            class="btn btn-outline-primary"
+            class="btn btn-primary"
         >
+            <i class="bi bi-pencil-square me-1"></i>
             Modifier
         </a>
 
@@ -31,13 +76,28 @@
         >
             {% csrf_token %}
 
-            <button class="btn btn-outline-secondary">
-                {% if organization.is_active %}
+            {% if organization.is_active %}
+
+                <button
+                    type="submit"
+                    class="btn btn-outline-danger"
+                >
+                    <i class="bi bi-pause-circle me-1"></i>
                     Désactiver
-                {% else %}
+                </button>
+
+            {% else %}
+
+                <button
+                    type="submit"
+                    class="btn btn-outline-success"
+                >
+                    <i class="bi bi-check-circle me-1"></i>
                     Réactiver
-                {% endif %}
-            </button>
+                </button>
+
+            {% endif %}
+
         </form>
 
     </div>
@@ -45,145 +105,384 @@
 </div>
 
 
-<div class="row g-4">
+<!-- =========================================================
+     CONTENU PRINCIPAL
+========================================================= -->
 
-    <div class="col-lg-5">
+<div class="row g-4 mt-1">
+
+    <!-- =====================================================
+         INFORMATIONS GÉNÉRALES
+    ====================================================== -->
+
+    <div class="col-xl-7">
 
         <div class="card h-100">
-            <div class="card-body">
 
-                <h2 class="h5 mb-3">
-                    Informations
-                </h2>
+            <div class="card-body structure-info-card">
 
-                <dl class="row mb-0">
+                <div class="section-heading">
+                    <div>
+                        <h2 class="h5 mb-1">
+                            Informations générales
+                        </h2>
 
-                    <dt class="col-sm-5">Immatriculation</dt>
-                    <dd class="col-sm-7">
-                        {{ organization.registration_number|default:"—" }}
-                    </dd>
+                        <p class="text-muted mb-0">
+                            Informations administratives et coordonnées
+                        </p>
+                    </div>
+                </div>
 
-                    <dt class="col-sm-5">Adresse</dt>
-                    <dd class="col-sm-7">
-                        {{ organization.address|default:"—" }}
-                    </dd>
 
-                    <dt class="col-sm-5">Ville</dt>
-                    <dd class="col-sm-7">
-                        {{ organization.city|default:"—" }}
-                    </dd>
+                <div class="structure-info-grid">
 
-                    <dt class="col-sm-5">Pays</dt>
-                    <dd class="col-sm-7">
-                        {{ organization.country|default:"—" }}
-                    </dd>
+                    <div class="structure-info-item">
+                        <span class="structure-info-label">
+                            Type
+                        </span>
 
-                    <dt class="col-sm-5">Téléphone</dt>
-                    <dd class="col-sm-7">
-                        {{ organization.phone|default:"—" }}
-                    </dd>
+                        <strong>
+                            {{ organization.get_organization_type_display }}
+                        </strong>
+                    </div>
 
-                    <dt class="col-sm-5">Email</dt>
-                    <dd class="col-sm-7">
-                        {{ organization.email|default:"—" }}
-                    </dd>
 
-                </dl>
+                    <div class="structure-info-item">
+                        <span class="structure-info-label">
+                            Immatriculation
+                        </span>
+
+                        <strong>
+                            {{ organization.registration_number|default:"—" }}
+                        </strong>
+                    </div>
+
+
+                    <div class="structure-info-item structure-info-wide">
+                        <span class="structure-info-label">
+                            Adresse
+                        </span>
+
+                        <span>
+                            {{ organization.address|default:"—" }}
+                        </span>
+                    </div>
+
+
+                    <div class="structure-info-item">
+                        <span class="structure-info-label">
+                            Ville
+                        </span>
+
+                        <span>
+                            {{ organization.city|default:"—" }}
+                        </span>
+                    </div>
+
+
+                    <div class="structure-info-item">
+                        <span class="structure-info-label">
+                            Pays
+                        </span>
+
+                        <span>
+                            {{ organization.country|default:"—" }}
+                        </span>
+                    </div>
+
+
+                    <div class="structure-info-item">
+                        <span class="structure-info-label">
+                            Téléphone
+                        </span>
+
+                        {% if organization.phone %}
+                            <a href="tel:{{ organization.phone }}">
+                                {{ organization.phone }}
+                            </a>
+                        {% else %}
+                            <span>—</span>
+                        {% endif %}
+                    </div>
+
+
+                    <div class="structure-info-item">
+                        <span class="structure-info-label">
+                            Email
+                        </span>
+
+                        {% if organization.email %}
+                            <a href="mailto:{{ organization.email }}">
+                                {{ organization.email }}
+                            </a>
+                        {% else %}
+                            <span>—</span>
+                        {% endif %}
+                    </div>
+
+                </div>
 
             </div>
+
         </div>
 
     </div>
 
 
-    <div class="col-lg-7">
+    <!-- =====================================================
+         CONTACT PRINCIPAL
+    ====================================================== -->
 
-        <div class="card">
+    <div class="col-xl-5">
 
-            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <div class="card h-100">
 
-                <h2 class="h5 mb-0">
-                    Contacts
-                </h2>
+            <div class="card-body">
 
-                <a
-                    href="{% url 'organizations:contact_create' %}?organization={{ organization.pk }}"
-                    class="btn btn-sm btn-primary"
-                >
-                    + Ajouter
-                </a>
+                <div class="section-heading">
 
-            </div>
+                    <div>
+                        <h2 class="h5 mb-1">
+                            Contact principal
+                        </h2>
 
-            <div class="table-responsive">
+                        <p class="text-muted mb-0">
+                            Interlocuteur privilégié
+                        </p>
+                    </div>
 
-                <table class="table align-middle mb-0">
+                </div>
 
-                    <thead class="table-light">
-                        <tr>
-                            <th>Nom</th>
-                            <th>Fonction</th>
-                            <th>Email</th>
-                            <th></th>
-                        </tr>
-                    </thead>
 
-                    <tbody>
+                {% for contact in organization.contacts.all %}
 
-                    {% for contact in organization.contacts.all %}
+                    {% if contact.is_primary %}
 
-                        <tr>
+                        <div class="primary-contact">
 
-                            <td>
-                                {{ contact.first_name }}
-                                {{ contact.last_name }}
+                            <div class="primary-contact-avatar">
+                                {{ contact.first_name|first }}{{ contact.last_name|first }}
+                            </div>
 
-                                {% if contact.is_primary %}
-                                    <span class="badge text-bg-primary">
-                                        Principal
-                                    </span>
-                                {% endif %}
-                            </td>
+                            <div class="primary-contact-content">
 
-                            <td>
-                                {{ contact.job_title|default:"—" }}
-                            </td>
+                                <strong class="primary-contact-name">
+                                    {{ contact.first_name }}
+                                    {{ contact.last_name }}
+                                </strong>
 
-                            <td>
-                                {{ contact.email|default:"—" }}
-                            </td>
+                                <span class="text-muted">
+                                    {{ contact.job_title|default:"Fonction non renseignée" }}
+                                </span>
 
-                            <td class="text-end">
+
+                                <div class="primary-contact-details">
+
+                                    {% if contact.email %}
+                                        <a href="mailto:{{ contact.email }}">
+                                            <i class="bi bi-envelope"></i>
+                                            {{ contact.email }}
+                                        </a>
+                                    {% endif %}
+
+                                </div>
+
+
                                 <a
                                     href="{% url 'organizations:contact_update' contact.pk %}"
-                                    class="btn btn-sm btn-outline-secondary"
+                                    class="btn btn-sm btn-outline-primary mt-3"
                                 >
-                                    Modifier
+                                    <i class="bi bi-pencil me-1"></i>
+                                    Modifier le contact
                                 </a>
-                            </td>
 
-                        </tr>
+                            </div>
 
-                    {% empty %}
+                        </div>
 
-                        <tr>
-                            <td
-                                colspan="4"
-                                class="text-center text-muted py-4"
-                            >
-                                Aucun contact.
-                            </td>
-                        </tr>
+                    {% endif %}
 
-                    {% endfor %}
+                {% empty %}
 
-                    </tbody>
+                    <div class="empty-state py-4 text-center">
 
-                </table>
+                        <i class="bi bi-person"></i>
+
+                        <p class="mb-1 fw-semibold">
+                            Aucun contact
+                        </p>
+
+                    </div>
+
+                {% endfor %}
+
+
+                <div class="mt-4">
+
+                    <a
+                        href="{% url 'organizations:contact_create' %}?organization={{ organization.pk }}"
+                        class="btn btn-outline-primary w-100"
+                    >
+                        <i class="bi bi-person-plus me-1"></i>
+                        Ajouter un contact
+                    </a>
+
+                </div>
 
             </div>
 
         </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     CONTACTS DE LA STRUCTURE
+========================================================= -->
+
+<div class="card mt-4">
+
+    <div class="card-header bg-white structure-card-header">
+
+        <div>
+            <h2 class="h5 mb-1">
+                Contacts
+            </h2>
+
+            <p class="text-muted mb-0">
+                Contacts associés à {{ organization.name }}
+            </p>
+        </div>
+
+        <a
+            href="{% url 'organizations:contact_create' %}?organization={{ organization.pk }}"
+            class="btn btn-sm btn-primary"
+        >
+            <i class="bi bi-plus-lg me-1"></i>
+            Ajouter
+        </a>
+
+    </div>
+
+
+    <div class="table-responsive">
+
+        <table class="table align-middle mb-0 organization-table">
+
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Fonction</th>
+                    <th>Email</th>
+                    <th>Type</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+            {% for contact in organization.contacts.all %}
+
+                <tr>
+
+                    <td>
+                        <strong>
+                            {{ contact.first_name }}
+                            {{ contact.last_name }}
+                        </strong>
+                    </td>
+
+
+                    <td>
+                        {{ contact.job_title|default:"—" }}
+                    </td>
+
+
+                    <td>
+
+                        {% if contact.email %}
+                            <a
+                                href="mailto:{{ contact.email }}"
+                                class="text-decoration-none"
+                            >
+                                {{ contact.email }}
+                            </a>
+                        {% else %}
+                            —
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        {% if contact.is_primary %}
+
+                            <span class="status-badge contact-primary-badge">
+                                Principal
+                            </span>
+
+                        {% else %}
+
+                            <span class="text-muted">
+                                Contact
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td class="text-end">
+
+                        <a
+                            href="{% url 'organizations:contact_update' contact.pk %}"
+                            class="btn btn-sm btn-outline-primary"
+                        >
+                            <i class="bi bi-pencil"></i>
+
+                            <span class="d-none d-xl-inline ms-1">
+                                Modifier
+                            </span>
+                        </a>
+
+                    </td>
+
+                </tr>
+
+
+            {% empty %}
+
+                <tr>
+                    <td
+                        colspan="5"
+                        class="text-center text-muted py-5"
+                    >
+
+                        <div class="empty-state">
+
+                            <i class="bi bi-people"></i>
+
+                            <p class="mb-1 fw-semibold">
+                                Aucun contact enregistré
+                            </p>
+
+                            <small>
+                                Ajoutez un premier contact à cette structure.
+                            </small>
+
+                        </div>
+
+                    </td>
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
 
     </div>
 

@@ -2,77 +2,309 @@
 
 {% block content %}
 
+<!-- Fil d'Ariane -->
+<div class="mb-3">
+    <a
+        href="{% url 'quotations:quotation_list' %}"
+        class="text-decoration-none"
+    >
+        Cotations
+    </a>
+
+    <span class="text-muted mx-2">›</span>
+
+    <span class="text-muted">
+        {{ quotation.reference }}
+    </span>
+</div>
+
+
+<!-- En-tête -->
 <div class="d-flex justify-content-between align-items-start mb-4">
+
     <div>
-        <h1>{{ quotation.reference }}</h1>
-        <p class="text-muted">
-            Cotation pour {{ quotation.request.reference }}
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+
+            <h1 class="mb-0">
+                Cotation {{ quotation.reference }}
+            </h1>
+
+            {% if quotation.status == "DRAFT" %}
+                <span class="badge text-bg-secondary">
+                    {{ quotation.get_status_display }}
+                </span>
+
+            {% elif quotation.status == "SENT" %}
+                <span class="badge text-bg-primary">
+                    {{ quotation.get_status_display }}
+                </span>
+
+            {% elif quotation.status == "ACCEPTED" %}
+                <span class="badge text-bg-success">
+                    {{ quotation.get_status_display }}
+                </span>
+
+            {% elif quotation.status == "REJECTED" %}
+                <span class="badge text-bg-danger">
+                    {{ quotation.get_status_display }}
+                </span>
+
+            {% elif quotation.status == "EXPIRED" %}
+                <span class="badge text-bg-warning">
+                    {{ quotation.get_status_display }}
+                </span>
+
+            {% else %}
+                <span class="badge text-bg-light">
+                    {{ quotation.get_status_display }}
+                </span>
+            {% endif %}
+
+        </div>
+
+        <p class="text-muted mt-2 mb-0">
+            Offre commerciale pour
+            {{ quotation.request.organization.name }}
         </p>
     </div>
 
-    <a
-        href="{% url 'quotations:quotation_update' quotation.pk %}"
-        class="btn btn-outline-primary"
-    >
-        Modifier
-    </a>
+
+    <div class="d-flex gap-2">
+
+        <a
+            href="{% url 'requests:request_detail' quotation.request.pk %}"
+            class="btn btn-outline-primary"
+        >
+            <i class="bi bi-file-earmark-text me-1"></i>
+            Voir la demande
+        </a>
+
+        <a
+            href="{% url 'quotations:quotation_update' quotation.pk %}"
+            class="btn btn-primary"
+        >
+            <i class="bi bi-pencil me-1"></i>
+            Modifier
+        </a>
+
+    </div>
+
 </div>
 
-<div class="card shadow-sm mb-4">
-    <div class="card-body">
 
-        <div class="row">
-            <div class="col-md-4">
-                <strong>Organisation</strong>
-                <p>{{ quotation.request.organization.name }}</p>
-            </div>
+<!-- Informations -->
+<div class="row g-4 mb-4">
 
-            <div class="col-md-4">
-                <strong>Demande</strong>
-                <p>
-                    <a href="{% url 'requests:request_detail' quotation.request.pk %}">
-                        {{ quotation.request.reference }}
-                    </a>
+    <!-- Informations de la cotation -->
+    <div class="col-lg-7">
+
+        <div class="card shadow-sm h-100">
+            <div class="card-body p-4">
+
+                <h2 class="h4 mb-1">
+                    Informations de la cotation
+                </h2>
+
+                <p class="text-muted mb-4">
+                    Informations générales et commerciales
                 </p>
-            </div>
 
-            <div class="col-md-4">
-                <strong>Statut</strong>
-                <p>
-                    <span class="badge text-bg-primary">
-                        {{ quotation.get_status_display }}
-                    </span>
-                </p>
-            </div>
-        </div>
 
-        <div class="row">
-            <div class="col-md-4">
-                <strong>Date d'émission</strong>
-                <p>{{ quotation.issue_date }}</p>
-            </div>
+                <div class="row g-4">
 
-            <div class="col-md-4">
-                <strong>Valide jusqu'au</strong>
-                <p>{{ quotation.valid_until }}</p>
+                    <div class="col-md-6">
+                        <div class="text-muted small mb-1">
+                            Organisation
+                        </div>
+
+                        <strong>
+                            {{ quotation.request.organization.name }}
+                        </strong>
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <div class="text-muted small mb-1">
+                            Demande
+                        </div>
+
+                        <a
+                            href="{% url 'requests:request_detail' quotation.request.pk %}"
+                            class="text-decoration-none fw-semibold"
+                        >
+                            {{ quotation.request.reference }}
+                        </a>
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <div class="text-muted small mb-1">
+                            Date d'émission
+                        </div>
+
+                        <strong>
+                            {{ quotation.issue_date }}
+                        </strong>
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <div class="text-muted small mb-1">
+                            Valide jusqu'au
+                        </div>
+
+                        <strong>
+                            {{ quotation.valid_until }}
+                        </strong>
+                    </div>
+
+                </div>
+
+
+                {% if quotation.notes %}
+
+                    <hr class="my-4">
+
+                    <div>
+                        <div class="text-muted small mb-2">
+                            Notes
+                        </div>
+
+                        <div>
+                            {{ quotation.notes|linebreaksbr }}
+                        </div>
+                    </div>
+
+                {% endif %}
+
             </div>
         </div>
 
     </div>
+
+
+    <!-- Statut / résumé commercial -->
+    <div class="col-lg-5">
+
+        <div class="card shadow-sm h-100">
+            <div class="card-body p-4">
+
+                <h2 class="h4 mb-1">
+                    Résumé commercial
+                </h2>
+
+                <p class="text-muted mb-4">
+                    État actuel de l'offre
+                </p>
+
+
+                <div class="mb-4">
+
+                    <div class="text-muted small mb-2">
+                        Statut
+                    </div>
+
+                    {% if quotation.status == "DRAFT" %}
+                        <span class="badge text-bg-secondary fs-6">
+                            {{ quotation.get_status_display }}
+                        </span>
+
+                    {% elif quotation.status == "SENT" %}
+                        <span class="badge text-bg-primary fs-6">
+                            {{ quotation.get_status_display }}
+                        </span>
+
+                    {% elif quotation.status == "ACCEPTED" %}
+                        <span class="badge text-bg-success fs-6">
+                            {{ quotation.get_status_display }}
+                        </span>
+
+                    {% elif quotation.status == "REJECTED" %}
+                        <span class="badge text-bg-danger fs-6">
+                            {{ quotation.get_status_display }}
+                        </span>
+
+                    {% elif quotation.status == "EXPIRED" %}
+                        <span class="badge text-bg-warning fs-6">
+                            {{ quotation.get_status_display }}
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <hr>
+
+
+                <div class="d-flex justify-content-between align-items-center mt-4">
+
+                    <span class="text-muted">
+                        Produits
+                    </span>
+
+                    <strong class="fs-5">
+                        {{ quotation.items.count }}
+                    </strong>
+
+                </div>
+
+
+                <div class="d-flex justify-content-between align-items-center mt-3">
+
+                    <span class="text-muted">
+                        Sous-total
+                    </span>
+
+                    <strong class="fs-4">
+                        {{ quotation.subtotal|floatformat:2 }} $
+                    </strong>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
 </div>
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Produits</h2>
 
-    <a
-        href="{% url 'quotations:quotation_item_create' quotation.pk %}"
-        class="btn btn-primary"
-    >
-        + Ajouter un produit
-    </a>
-</div>
-
+<!-- Produits -->
 <div class="card shadow-sm">
+
+    <!-- En-tête de section -->
+    <div class="card-header bg-white py-3">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <div>
+                <h2 class="h4 mb-1">
+                    Produits de la cotation
+                </h2>
+
+                <p class="text-muted small mb-0">
+                    {{ quotation.items.count }}
+                    produit{{ quotation.items.count|pluralize }}
+                    dans cette cotation
+                </p>
+            </div>
+
+
+            <a
+                href="{% url 'quotations:quotation_item_create' quotation.pk %}"
+                class="btn btn-primary"
+            >
+                <i class="bi bi-plus-lg me-1"></i>
+                Ajouter un produit
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- Tableau -->
     <div class="table-responsive">
 
         <table class="table table-hover align-middle mb-0">
@@ -82,57 +314,91 @@
                     <th>SKU</th>
                     <th>Produit</th>
                     <th>Quantité</th>
-                    <th class="text-end">Prix unitaire</th>
-                    <th class="text-end">Total</th>
-                    <th class="text-end">Actions</th>
+                    <th class="text-end">
+                        Prix unitaire
+                    </th>
+                    <th class="text-end">
+                        Total
+                    </th>
+                    <th class="text-end">
+                        Actions
+                    </th>
                 </tr>
             </thead>
+
 
             <tbody>
 
                 {% for item in quotation.items.all %}
 
                 <tr>
-                    <td>{{ item.product.sku }}</td>
 
                     <td>
-                        <strong>{{ item.product.name }}</strong>
+                        {{ item.product.sku }}
                     </td>
 
-                    <td>{{ item.quantity }}</td>
+
+                    <td>
+                        <strong>
+                            {{ item.product.name }}
+                        </strong>
+                    </td>
+
+
+                    <td>
+                        {{ item.quantity }}
+                    </td>
+
 
                     <td class="text-end">
                         {{ item.unit_price|floatformat:2 }} $
                     </td>
 
-                    <td class="text-end">
-                        {{ item.line_total|floatformat:2 }} $
-                    </td>
 
                     <td class="text-end">
+                        <strong>
+                            {{ item.line_total|floatformat:2 }} $
+                        </strong>
+                    </td>
 
-                        <a
-                            href="{% url 'quotations:quotation_item_update' item.pk %}"
-                            class="btn btn-sm btn-outline-primary"
-                        >
-                            Modifier
-                        </a>
 
-                        <a
-                            href="{% url 'quotations:quotation_item_delete' item.pk %}"
-                            class="btn btn-sm btn-outline-danger"
-                        >
-                            Retirer
-                        </a>
+                    <td class="text-end">
+
+                        <div class="d-flex justify-content-end gap-1">
+
+                            <a
+                                href="{% url 'quotations:quotation_item_update' item.pk %}"
+                                class="btn btn-sm btn-outline-primary"
+                            >
+                                <i class="bi bi-pencil me-1"></i>
+                                Modifier
+                            </a>
+
+
+                            <a
+                                href="{% url 'quotations:quotation_item_delete' item.pk %}"
+                                class="btn btn-sm btn-outline-danger"
+                            >
+                                Retirer
+                            </a>
+
+                        </div>
 
                     </td>
+
                 </tr>
+
 
                 {% empty %}
 
                 <tr>
-                    <td colspan="6" class="text-center text-muted py-4">
-                        Aucun produit.
+                    <td
+                        colspan="6"
+                        class="text-center text-muted py-5"
+                    >
+                        <i class="bi bi-box fs-3 d-block mb-2"></i>
+
+                        Aucun produit dans cette cotation.
                     </td>
                 </tr>
 
@@ -140,23 +406,29 @@
 
             </tbody>
 
+
             <tfoot>
+
                 <tr>
-                    <th colspan="4" class="text-end">
+
+                    <th colspan="4" class="text-end py-3">
                         Sous-total
                     </th>
 
-                    <th class="text-end">
+                    <th class="text-end py-3 fs-5">
                         {{ quotation.subtotal|floatformat:2 }} $
                     </th>
 
                     <th></th>
+
                 </tr>
+
             </tfoot>
 
         </table>
 
     </div>
+
 </div>
 
 {% endblock %}

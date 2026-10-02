@@ -2,132 +2,379 @@
 
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-start mb-4">
+<!-- Breadcrumb -->
+<div class="page-breadcrumb mb-3">
+    <a href="{% url 'requests:request_list' %}">Demandes</a>
+    <span>›</span>
+    <span>{{ request_obj.reference }}</span>
+</div>
+
+
+<!-- En-tête -->
+<div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
 
     <div>
-        <h2>{{ request_obj.reference }}</h2>
-        <p class="text-muted">
-            {{ request_obj.title }}
+        <div class="d-flex align-items-center gap-3 mb-1">
+            <h2 class="mb-0">
+                Demande {{ request_obj.reference }}
+            </h2>
+
+            <span class="badge
+                {% if request_obj.status == 'NEW' %}
+                    text-bg-primary
+                {% elif request_obj.status == 'TO_ANALYZE' %}
+                    text-bg-info
+                {% elif request_obj.status == 'IN_PROGRESS' %}
+                    text-bg-warning
+                {% elif request_obj.status == 'OFFER_SENT' %}
+                    bg-purple
+                {% elif request_obj.status == 'WON' %}
+                    text-bg-success
+                {% elif request_obj.status == 'LOST' %}
+                    text-bg-danger
+                {% else %}
+                    text-bg-secondary
+                {% endif %}
+            ">
+                {{ request_obj.get_status_display }}
+            </span>
+        </div>
+
+        <p class="text-muted mb-0">
+            {{ request_obj.organization.name }}
         </p>
     </div>
 
-    <a href="{% url 'requests:request_update' request_obj.pk %}"
-       class="btn btn-outline-primary">
-        Modifier
-    </a>
 
-</div>
+    <div class="d-flex gap-2">
 
-<div class="card shadow-sm mb-4">
-    <div class="card-body">
+        <a href="{% url 'requests:request_update' request_obj.pk %}"
+           class="btn btn-outline-primary">
+            ✎ Modifier
+        </a>
 
-        <div class="row">
+        {% with quotation=request_obj.quotations.first %}
 
-            <div class="col-md-4">
-                <strong>Organisation</strong>
-                <p>{{ request_obj.organization }}</p>
-            </div>
+            {% if quotation %}
 
-            <div class="col-md-4">
-                <strong>Contact</strong>
-                <p>{{ request_obj.contact }}</p>
-            </div>
+                <a href="{% url 'quotations:quotation_detail' quotation.pk %}"
+                   class="btn btn-primary">
+                    Voir la cotation {{ quotation.reference }}
+                </a>
 
-            <div class="col-md-4">
-                <strong>Statut</strong>
-                <p>
-                    <span class="badge text-bg-primary">
-                        {{ request_obj.get_status_display }}
-                    </span>
-                </p>
-            </div>
+            {% else %}
 
-        </div>
+                <a href="{% url 'quotations:quotation_create_from_request' request_obj.pk %}"
+                   class="btn btn-success">
+                    + Créer une cotation
+                </a>
 
-        <strong>Description</strong>
-        <p>{{ request_obj.description|default:"—" }}</p>
+            {% endif %}
+
+        {% endwith %}
 
     </div>
-</div>
-
-
-<div class="d-flex justify-content-between align-items-center mb-3">
-
-    <h3>Produits demandés</h3>
-
-    <a href="{% url 'requests:request_item_create' request_obj.pk %}"
-       class="btn btn-primary">
-        + Ajouter un produit
-    </a>
 
 </div>
 
 
+<!-- Informations principales -->
+<div class="row g-4 mb-4">
+
+    <!-- Informations -->
+    <div class="col-lg-7">
+
+        <div class="card shadow-sm h-100">
+            <div class="card-body p-4">
+
+                <h4 class="mb-1">
+                    Informations de la demande
+                </h4>
+
+                <p class="text-muted small mb-4">
+                    Informations générales et interlocuteur
+                </p>
+
+                <div class="row g-4">
+
+                    <div class="col-md-6">
+                        <div class="text-muted small mb-1">
+                            Structure
+                        </div>
+
+                        <strong>
+                            {{ request_obj.organization.name }}
+                        </strong>
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <div class="text-muted small mb-1">
+                            Contact
+                        </div>
+
+                        <strong>
+                            {{ request_obj.contact }}
+                        </strong>
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <div class="text-muted small mb-1">
+                            Date de création
+                        </div>
+
+                        <strong>
+                            {{ request_obj.created_at|date:"j F Y" }}
+                        </strong>
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <div class="text-muted small mb-1">
+                            Date souhaitée
+                        </div>
+
+                        <strong>
+                            {% if request_obj.desired_date %}
+                                {{ request_obj.desired_date|date:"j F Y" }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </strong>
+                    </div>
+
+                </div>
+
+
+                <hr class="my-4">
+
+
+                <div class="mb-4">
+
+                    <div class="text-muted small mb-1">
+                        Objet
+                    </div>
+
+                    <strong>
+                        {{ request_obj.title }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <div class="text-muted small mb-1">
+                        Description
+                    </div>
+
+                    <p class="mb-0">
+                        {{ request_obj.description|default:"—" }}
+                    </p>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Statut -->
+    <div class="col-lg-5">
+
+        <div class="card shadow-sm h-100">
+            <div class="card-body p-4">
+
+                <h4 class="mb-1">
+                    Statut actuel
+                </h4>
+
+                <p class="text-muted small mb-4">
+                    Suivi du traitement de la demande
+                </p>
+
+
+                <div class="request-current-status mb-4">
+
+                    <span class="badge
+                        {% if request_obj.status == 'NEW' %}
+                            text-bg-primary
+                        {% elif request_obj.status == 'TO_ANALYZE' %}
+                            text-bg-info
+                        {% elif request_obj.status == 'IN_PROGRESS' %}
+                            text-bg-warning
+                        {% elif request_obj.status == 'OFFER_SENT' %}
+                            bg-purple
+                        {% elif request_obj.status == 'WON' %}
+                            text-bg-success
+                        {% elif request_obj.status == 'LOST' %}
+                            text-bg-danger
+                        {% else %}
+                            text-bg-secondary
+                        {% endif %}
+                    ">
+                        {{ request_obj.get_status_display }}
+                    </span>
+
+                </div>
+
+
+                <div class="request-status-list">
+
+                    <div class="request-status-item
+                        {% if request_obj.status == 'NEW' %}active{% endif %}">
+                        <span class="status-dot"></span>
+                        Nouvelle
+                    </div>
+
+                    <div class="request-status-item
+                        {% if request_obj.status == 'TO_ANALYZE' %}active{% endif %}">
+                        <span class="status-dot"></span>
+                        À analyser
+                    </div>
+
+                    <div class="request-status-item
+                        {% if request_obj.status == 'IN_PROGRESS' %}active{% endif %}">
+                        <span class="status-dot"></span>
+                        En cours
+                    </div>
+
+                    <div class="request-status-item
+                        {% if request_obj.status == 'OFFER_SENT' %}active{% endif %}">
+                        <span class="status-dot"></span>
+                        Offre envoyée
+                    </div>
+
+                    <div class="request-status-item
+                        {% if request_obj.status == 'WON' %}active{% endif %}">
+                        <span class="status-dot"></span>
+                        Gagnée
+                    </div>
+
+                    <div class="request-status-item
+                        {% if request_obj.status == 'LOST' %}active{% endif %}">
+                        <span class="status-dot"></span>
+                        Perdue
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Produits -->
 <div class="card shadow-sm">
 
-    <table class="table table-hover align-middle mb-0">
+    <div class="card-header bg-white d-flex justify-content-between
+                align-items-center py-3">
 
-        <thead class="table-light">
-            <tr>
-                <th>SKU</th>
-                <th>Produit</th>
-                <th>Quantité</th>
-                <th>Notes</th>
-                <th class="text-end">Actions</th>
-            </tr>
-        </thead>
+        <div>
+            <h4 class="mb-1">
+                Produits demandés
+            </h4>
 
-        <tbody>
+            <span class="text-muted small">
+                {{ request_obj.items.count }}
+                produit{{ request_obj.items.count|pluralize }}
+                dans cette demande
+            </span>
+        </div>
 
-        {% for item in request_obj.items.all %}
 
-            <tr>
-                <td>{{ item.product.sku }}</td>
+        <a href="{% url 'requests:request_item_create' request_obj.pk %}"
+           class="btn btn-primary">
+            + Ajouter un produit
+        </a>
 
-                <td>
-                    <strong>{{ item.product.name }}</strong>
-                </td>
+    </div>
 
-                <td>{{ item.quantity }}</td>
 
-                <td>{{ item.notes|default:"—" }}</td>
+    <div class="table-responsive">
 
-                <td class="text-end">
+        <table class="table table-hover align-middle mb-0">
 
-                    <a
-                        href="{% url 'quotations:quotation_create_from_request' request_obj.pk %}"
-                        class="btn btn-success"
-                    >
-                        Créer une cotation
-                    </a>
+            <thead class="table-light">
+                <tr>
+                    <th>SKU</th>
+                    <th>Produit</th>
+                    <th>Quantité</th>
+                    <th>Notes</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
 
-                    <a href="{% url 'requests:request_item_update' item.pk %}"
-                    class="btn btn-sm btn-outline-primary">
-                        Modifier
-                    </a>
 
-                    <a href="{% url 'requests:request_item_delete' item.pk %}"
-                    class="btn btn-sm btn-outline-danger">
-                        Retirer
-                    </a>
+            <tbody>
 
-                </td>
-            </tr>
+                {% for item in request_obj.items.all %}
 
-        {% empty %}
+                    <tr>
 
-            <tr>
-                <td colspan="5"
-                    class="text-center text-muted py-4">
-                    Aucun produit ajouté.
-                </td>
-            </tr>
+                        <td>
+                            <span class="text-muted">
+                                {{ item.product.sku }}
+                            </span>
+                        </td>
 
-        {% endfor %}
 
-        </tbody>
+                        <td>
+                            <strong>
+                                {{ item.product.name }}
+                            </strong>
+                        </td>
 
-    </table>
+
+                        <td>
+                            {{ item.quantity }}
+                        </td>
+
+
+                        <td>
+                            {{ item.notes|default:"—" }}
+                        </td>
+
+
+                        <td class="text-end">
+
+                            <a href="{% url 'requests:request_item_update' item.pk %}"
+                               class="btn btn-sm btn-outline-primary">
+                                Modifier
+                            </a>
+
+                            <a href="{% url 'requests:request_item_delete' item.pk %}"
+                               class="btn btn-sm btn-outline-danger">
+                                Retirer
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="5"
+                            class="text-center text-muted py-5">
+
+                            Aucun produit ajouté à cette demande.
+
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
 
 </div>
 

@@ -4,76 +4,178 @@
 
 {% block content %}
 
+<!-- =========================================================
+     EN-TÊTE
+========================================================= -->
+
 <div class="page-header">
+
     <div>
-        <h1 class="h3 mb-1">{{ page_title }}</h1>
+        <h1 class="h3 mb-1">
+            {{ page_title }}
+        </h1>
+
         <p class="text-muted mb-0">
-            Informations de l'organisation
+            Renseignez les informations de la structure cliente
         </p>
     </div>
+
 </div>
 
-<div class="card form-card">
+
+<!-- =========================================================
+     FORMULAIRE
+========================================================= -->
+
+<div class="card form-card organization-form-card">
+
     <div class="card-body">
+
+        <div class="form-section-header">
+
+            <div class="form-section-icon">
+                <i class="bi bi-buildings"></i>
+            </div>
+
+            <div>
+                <h2 class="form-section-title">
+                    Informations générales
+                </h2>
+
+                <p class="form-section-subtitle">
+                    Informations administratives et coordonnées
+                </p>
+            </div>
+
+        </div>
+
 
         <form method="post">
 
             {% csrf_token %}
 
+
             {% if form.non_field_errors %}
-                <div class="alert alert-danger">
-                    {{ form.non_field_errors }}
+
+                <div class="alert alert-danger mb-4">
+
+                    {% for error in form.non_field_errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+
                 </div>
+
             {% endif %}
 
-            <div class="row">
+
+            <div class="row g-3">
 
                 {% for field in form %}
 
-                    <div class="{% if field.name == 'description' %}col-12{% else %}col-md-6{% endif %} mb-3">
+                    {% if field.field.widget.input_type == "checkbox" %}
 
-                        {% if field.field.widget.input_type == "checkbox" %}
+                        <div class="col-12">
 
-                            <div class="form-check mt-4">
-                                {{ field }}
+                            <div class="organization-checkbox-field">
+
+                                <div class="form-check">
+
+                                    {{ field }}
+
+                                    <label
+                                        class="form-check-label"
+                                        for="{{ field.id_for_label }}"
+                                    >
+                                        {{ field.label }}
+                                    </label>
+
+                                </div>
+
+
+                                {% if field.help_text %}
+
+                                    <div class="form-text ms-4">
+                                        {{ field.help_text }}
+                                    </div>
+
+                                {% endif %}
+
+
+                                {% for error in field.errors %}
+
+                                    <div class="text-danger small ms-4 mt-1">
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+
+                    {% else %}
+
+                        <div
+                            class="
+                                {% if field.name == 'description' %}
+                                    col-12
+                                {% else %}
+                                    col-md-6
+                                {% endif %}
+                            "
+                        >
+
+                            <div class="organization-form-field">
+
                                 <label
-                                    class="form-check-label"
                                     for="{{ field.id_for_label }}"
+                                    class="form-label"
                                 >
                                     {{ field.label }}
+
+                                    {% if field.field.required %}
+                                        <span class="required-mark">*</span>
+                                    {% endif %}
                                 </label>
+
+
+                                {{ field }}
+
+
+                                {% if field.help_text %}
+
+                                    <div class="form-text">
+                                        {{ field.help_text }}
+                                    </div>
+
+                                {% endif %}
+
+
+                                {% for error in field.errors %}
+
+                                    <div class="text-danger small mt-1">
+                                        {{ error }}
+                                    </div>
+
+                                {% endfor %}
+
                             </div>
 
-                        {% else %}
+                        </div>
 
-                            <label
-                                for="{{ field.id_for_label }}"
-                                class="form-label"
-                            >
-                                {{ field.label }}
-                            </label>
-
-                            {{ field }}
-
-                        {% endif %}
-
-                        {% for error in field.errors %}
-                            <div class="text-danger small">
-                                {{ error }}
-                            </div>
-                        {% endfor %}
-
-                    </div>
+                    {% endif %}
 
                 {% endfor %}
 
             </div>
 
-            <div class="d-flex gap-2">
 
-                <button class="btn btn-primary">
-                    Enregistrer
-                </button>
+            <!-- =================================================
+                 ACTIONS
+            ================================================== -->
+
+            <div class="form-actions">
 
                 <a
                     href="{% url 'organizations:organization_list' %}"
@@ -82,11 +184,21 @@
                     Annuler
                 </a>
 
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    <i class="bi bi-check-lg me-1"></i>
+                    Enregistrer
+                </button>
+
             </div>
 
         </form>
 
     </div>
+
 </div>
 
 {% endblock %}

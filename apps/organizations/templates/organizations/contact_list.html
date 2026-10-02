@@ -4,13 +4,19 @@
 
 {% block content %}
 
+<!-- =========================================================
+     EN-TÊTE
+========================================================= -->
+
 <div class="page-header">
 
     <div>
-        <h1 class="h3 mb-1">Contacts</h1>
+        <h1 class="h3 mb-1">
+            Contacts
+        </h1>
 
         <p class="text-muted mb-0">
-            Contacts des organisations
+            Gérez les contacts de vos structures clientes
         </p>
     </div>
 
@@ -18,90 +24,240 @@
         href="{% url 'organizations:contact_create' %}"
         class="btn btn-primary"
     >
-        + Nouveau contact
+        <i class="bi bi-plus-lg me-1"></i>
+        Nouveau contact
     </a>
 
 </div>
 
 
+<!-- =========================================================
+     RECHERCHE / COMPTEUR
+========================================================= -->
+
+<div class="card mb-3">
+
+    <div class="card-body py-3">
+
+        <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+
+            <div class="list-search-box">
+
+                <i class="bi bi-search"></i>
+
+                <input
+                    type="search"
+                    id="contactSearch"
+                    class="form-control"
+                    placeholder="Rechercher un contact..."
+                    aria-label="Rechercher un contact"
+                >
+
+            </div>
+
+
+            <div class="list-count">
+
+                <i class="bi bi-people"></i>
+
+                <span>
+                    {{ contacts|length }}
+                    contact{{ contacts|length|pluralize }}
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     TABLEAU
+========================================================= -->
+
 <div class="card">
 
     <div class="table-responsive">
 
-        <table class="table table-hover align-middle mb-0">
+        <table
+            class="table table-hover align-middle mb-0 organization-table"
+            id="contactsTable"
+        >
 
-            <thead class="table-light">
+            <thead>
+
                 <tr>
-                    <th>Nom</th>
-                    <th>Organisation</th>
+                    <th>Contact</th>
+                    <th>Structure</th>
                     <th>Fonction</th>
                     <th>Email</th>
                     <th>Téléphone</th>
-                    <th></th>
+                    <th class="text-end">Actions</th>
                 </tr>
+
             </thead>
+
 
             <tbody>
 
             {% for contact in contacts %}
 
-                <tr>
+                <tr class="contact-row">
+
+                    <!-- CONTACT -->
 
                     <td>
-                        <strong>
-                            {{ contact.first_name }}
-                            {{ contact.last_name }}
-                        </strong>
 
-                        {% if contact.is_primary %}
-                            <span class="badge text-bg-primary">
-                                Principal
-                            </span>
-                        {% endif %}
+                        <div class="contact-list-identity">
+
+                            <div class="contact-list-avatar">
+                                {{ contact.first_name|first }}{{ contact.last_name|first }}
+                            </div>
+
+
+                            <div>
+
+                                <div class="d-flex align-items-center gap-2 flex-wrap">
+
+                                    <strong class="contact-name">
+                                        {{ contact.first_name }}
+                                        {{ contact.last_name }}
+                                    </strong>
+
+
+                                    {% if contact.is_primary %}
+
+                                        <span class="status-badge contact-primary-badge">
+                                            Principal
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
                     </td>
 
+
+                    <!-- STRUCTURE -->
+
                     <td>
+
                         <a
                             href="{% url 'organizations:organization_detail' contact.organization.pk %}"
+                            class="contact-organization-link"
                         >
+                            <i class="bi bi-buildings me-1"></i>
+
                             {{ contact.organization.name }}
                         </a>
+
                     </td>
+
+
+                    <!-- FONCTION -->
 
                     <td>
                         {{ contact.job_title|default:"—" }}
                     </td>
 
-                    <td>
-                        {{ contact.email|default:"—" }}
-                    </td>
+
+                    <!-- EMAIL -->
 
                     <td>
-                        {{ contact.phone|default:"—" }}
+
+                        {% if contact.email %}
+
+                            <a
+                                href="mailto:{{ contact.email }}"
+                                class="contact-info-link"
+                            >
+                                {{ contact.email }}
+                            </a>
+
+                        {% else %}
+
+                            <span class="text-muted">—</span>
+
+                        {% endif %}
+
                     </td>
+
+
+                    <!-- TÉLÉPHONE -->
+
+                    <td>
+
+                        {% if contact.phone %}
+
+                            <a
+                                href="tel:{{ contact.phone }}"
+                                class="contact-info-link"
+                            >
+                                {{ contact.phone }}
+                            </a>
+
+                        {% else %}
+
+                            <span class="text-muted">—</span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- ACTIONS -->
 
                     <td class="text-end">
 
                         <a
                             href="{% url 'organizations:contact_update' contact.pk %}"
-                            class="btn btn-sm btn-outline-secondary"
+                            class="btn btn-sm btn-outline-primary"
+                            title="Modifier {{ contact.first_name }} {{ contact.last_name }}"
                         >
-                            Modifier
+                            <i class="bi bi-pencil"></i>
+
+                            <span class="d-none d-xl-inline ms-1">
+                                Modifier
+                            </span>
                         </a>
 
                     </td>
 
                 </tr>
 
+
             {% empty %}
 
                 <tr>
+
                     <td
                         colspan="6"
-                        class="text-center text-muted py-4"
+                        class="text-center py-5"
                     >
-                        Aucun contact enregistré.
+
+                        <div class="empty-state">
+
+                            <i class="bi bi-people"></i>
+
+                            <p class="mb-1 fw-semibold">
+                                Aucun contact enregistré
+                            </p>
+
+                            <small class="text-muted">
+                                Ajoutez votre premier contact.
+                            </small>
+
+                        </div>
+
                     </td>
+
                 </tr>
 
             {% endfor %}
@@ -113,5 +269,47 @@
     </div>
 
 </div>
+
+
+<!-- =========================================================
+     RECHERCHE LOCALE
+========================================================= -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const searchInput = document.getElementById("contactSearch");
+
+    const rows = document.querySelectorAll(
+        "#contactsTable .contact-row"
+    );
+
+    if (!searchInput) {
+        return;
+    }
+
+    searchInput.addEventListener("input", function () {
+
+        const searchValue =
+            this.value.toLowerCase().trim();
+
+        rows.forEach(function (row) {
+
+            const rowText =
+                row.textContent.toLowerCase();
+
+            row.style.display =
+                rowText.includes(searchValue)
+                    ? ""
+                    : "none";
+
+        });
+
+    });
+
+});
+
+</script>
 
 {% endblock %}

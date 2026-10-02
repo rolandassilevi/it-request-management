@@ -1,82 +1,195 @@
 {% extends "base.html" %}
 
-{% block title %}Catégorie | ITRequest{% endblock %}
+{% block title %}
+    {% if form.instance.pk %}Modifier la catégorie{% else %}Nouvelle catégorie{% endif %}
+    | ITRequest
+{% endblock %}
 
 {% block content %}
 
-<div class="page-header">
+<!-- En-tête -->
+<div class="page-header mb-4">
 
     <div>
+
         <h1 class="h3 mb-1">
+
             {% if form.instance.pk %}
                 Modifier la catégorie
             {% else %}
                 Nouvelle catégorie
             {% endif %}
+
         </h1>
 
         <p class="text-muted mb-0">
-            Classification du matériel
+
+            {% if form.instance.pk %}
+                Mettez à jour les informations de la catégorie
+            {% else %}
+                Créez une nouvelle catégorie de produits
+            {% endif %}
+
         </p>
+
     </div>
 
 </div>
 
+
 <div class="card form-card">
 
-    <div class="card-body">
+    <div class="card-body p-4">
+
+        <!-- Titre de section -->
+        <div class="d-flex align-items-center gap-3 mb-4">
+
+            <div class="d-flex align-items-center justify-content-center
+                        rounded-3 bg-primary-subtle text-primary"
+                 style="width: 44px; height: 44px;">
+
+                <i class="bi bi-tag fs-5"></i>
+
+            </div>
+
+            <div>
+
+                <h2 class="h5 mb-1">
+                    Informations de la catégorie
+                </h2>
+
+                <p class="text-muted small mb-0">
+                    Classification et organisation du catalogue
+                </p>
+
+            </div>
+
+        </div>
+
+        <hr class="mb-4">
+
 
         <form method="post">
             {% csrf_token %}
 
-            {% for field in form %}
 
-                <div class="mb-3">
+            {% if form.non_field_errors %}
 
-                    {% if field.field.widget.input_type == "checkbox" %}
+                <div class="alert alert-danger">
 
-                        <div class="form-check">
-                            {{ field }}
-
-                            <label class="form-check-label"
-                                   for="{{ field.id_for_label }}">
-                                {{ field.label }}
-                            </label>
-                        </div>
-
-                    {% else %}
-
-                        <label class="form-label"
-                               for="{{ field.id_for_label }}">
-                            {{ field.label }}
-                        </label>
-
-                        {{ field }}
-
-                    {% endif %}
-
-                    {% for error in field.errors %}
-                        <div class="text-danger small">
-                            {{ error }}
-                        </div>
+                    {% for error in form.non_field_errors %}
+                        <div>{{ error }}</div>
                     {% endfor %}
 
                 </div>
 
-            {% endfor %}
+            {% endif %}
 
-            <button class="btn btn-primary">
-                Enregistrer
-            </button>
 
-            <a href="{% url 'catalog:category_list' %}"
-               class="btn btn-outline-secondary">
-                Annuler
-            </a>
+            <div class="row g-3">
+
+                {% for field in form %}
+
+                    <div class="
+                        {% if field.name == 'description' %}
+                            col-12
+                        {% elif field.field.widget.input_type == 'checkbox' %}
+                            col-12
+                        {% else %}
+                            col-md-6
+                        {% endif %}
+                    ">
+
+                        {% if field.field.widget.input_type == "checkbox" %}
+
+                            <div class="border rounded-3 p-3 mt-2">
+
+                                <div class="form-check mb-0">
+
+                                    {{ field }}
+
+                                    <label class="form-check-label fw-medium"
+                                           for="{{ field.id_for_label }}">
+                                        {{ field.label }}
+                                    </label>
+
+                                </div>
+
+                            </div>
+
+                        {% else %}
+
+                            <label class="form-label"
+                                   for="{{ field.id_for_label }}">
+
+                                {{ field.label }}
+
+                                {% if field.field.required %}
+                                    <span class="text-danger">*</span>
+                                {% endif %}
+
+                            </label>
+
+                            {{ field }}
+
+                        {% endif %}
+
+
+                        {% if field.help_text %}
+
+                            <div class="form-text">
+                                {{ field.help_text }}
+                            </div>
+
+                        {% endif %}
+
+
+                        {% for error in field.errors %}
+
+                            <div class="text-danger small mt-1">
+                                {{ error }}
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <hr class="my-4">
+
+
+            <div class="d-flex justify-content-end gap-2">
+
+                <a href="{% url 'catalog:category_list' %}"
+                   class="btn btn-outline-secondary">
+
+                    Annuler
+
+                </a>
+
+                <button type="submit"
+                        class="btn btn-primary">
+
+                    <i class="bi bi-check-lg me-1"></i>
+
+                    {% if form.instance.pk %}
+                        Enregistrer les modifications
+                    {% else %}
+                        Enregistrer
+                    {% endif %}
+
+                </button>
+
+            </div>
 
         </form>
 
     </div>
+
 </div>
 
 {% endblock %}

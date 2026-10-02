@@ -1,14 +1,19 @@
 {% extends "base.html" %}
 
-{% block title %}Organisations | ITRequest{% endblock %}
+{% block title %}Structures | ITRequest{% endblock %}
 
 {% block content %}
 
+<!-- =========================================================
+     EN-TÊTE
+========================================================= -->
+
 <div class="page-header">
     <div>
-        <h1 class="h3 mb-1">Organisations</h1>
+        <h1 class="h3 mb-1">Structures</h1>
+
         <p class="text-muted mb-0">
-            Clients et structures enregistrés
+            Gérez vos structures clientes
         </p>
     </div>
 
@@ -16,25 +21,69 @@
         href="{% url 'organizations:organization_create' %}"
         class="btn btn-primary"
     >
-        + Nouvelle organisation
+        <i class="bi bi-plus-lg me-1"></i>
+        Nouvelle structure
     </a>
 </div>
 
+
+<!-- =========================================================
+     BARRE DE RECHERCHE / FILTRES VISUELS
+========================================================= -->
+
+<div class="card organization-toolbar-card mb-3">
+    <div class="card-body">
+
+        <div class="organization-toolbar">
+
+            <div class="organization-search">
+                <i class="bi bi-search"></i>
+
+                <input
+                    type="text"
+                    id="organizationSearch"
+                    class="form-control"
+                    placeholder="Rechercher une structure..."
+                    aria-label="Rechercher une structure"
+                >
+            </div>
+
+            <div class="organization-summary">
+                <i class="bi bi-buildings"></i>
+                {{ organizations|length }}
+                structure{{ organizations|length|pluralize }}
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<!-- =========================================================
+     TABLEAU DES STRUCTURES
+========================================================= -->
+
 <div class="card">
+
     <div class="card-body p-0">
 
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
 
-                <thead class="table-light">
+            <table
+                class="table table-hover align-middle mb-0 organization-table"
+                id="organizationTable"
+            >
+
+                <thead>
                     <tr>
-                        <th>Organisation</th>
+                        <th>Nom</th>
                         <th>Type</th>
                         <th>Ville</th>
                         <th>Pays</th>
                         <th>Contacts</th>
                         <th>Statut</th>
-                        <th></th>
+                        <th class="text-end">Actions</th>
                     </tr>
                 </thead>
 
@@ -43,62 +92,161 @@
                 {% for organization in organizations %}
 
                     <tr>
-                        <td class="fw-semibold">
-                            {{ organization.name }}
+
+                        <!-- NOM -->
+                        <td>
+                            <a
+                                href="{% url 'organizations:organization_detail' organization.pk %}"
+                                class="organization-name"
+                            >
+                                {{ organization.name }}
+                            </a>
                         </td>
 
+
+                        <!-- TYPE -->
                         <td>
                             {{ organization.get_organization_type_display }}
                         </td>
 
-                        <td>{{ organization.city|default:"—" }}</td>
 
-                        <td>{{ organization.country|default:"—" }}</td>
-
+                        <!-- VILLE -->
                         <td>
-                            {{ organization.contacts.count }}
+                            {{ organization.city|default:"—" }}
                         </td>
 
+
+                        <!-- PAYS -->
                         <td>
+                            {{ organization.country|default:"—" }}
+                        </td>
+
+
+                        <!-- CONTACTS -->
+                        <td>
+                            <span class="organization-contact-count">
+                                <i class="bi bi-people"></i>
+                                {{ organization.contacts.count }}
+                            </span>
+                        </td>
+
+
+                        <!-- STATUT -->
+                        <td>
+
                             {% if organization.is_active %}
-                                <span class="badge text-bg-success">
+
+                                <span class="status-badge status-active">
                                     Active
                                 </span>
+
                             {% else %}
-                                <span class="badge text-bg-secondary">
+
+                                <span class="status-badge status-inactive">
                                     Inactive
                                 </span>
+
                             {% endif %}
+
                         </td>
 
+
+                        <!-- ACTIONS -->
                         <td class="text-end">
+
                             <a
                                 href="{% url 'organizations:organization_detail' organization.pk %}"
                                 class="btn btn-sm btn-outline-primary"
+                                title="Consulter la structure"
                             >
-                                Consulter
+                                <i class="bi bi-eye"></i>
+                                <span class="d-none d-xl-inline ms-1">
+                                    Consulter
+                                </span>
                             </a>
+
                         </td>
+
                     </tr>
+
 
                 {% empty %}
 
                     <tr>
                         <td
                             colspan="7"
-                            class="text-center text-muted py-4"
+                            class="text-center text-muted py-5"
                         >
-                            Aucune organisation enregistrée.
+
+                            <div class="empty-state">
+
+                                <i class="bi bi-buildings"></i>
+
+                                <p class="mb-1 fw-semibold">
+                                    Aucune structure enregistrée
+                                </p>
+
+                                <small>
+                                    Commencez par créer votre première structure cliente.
+                                </small>
+
+                            </div>
+
                         </td>
                     </tr>
 
                 {% endfor %}
 
                 </tbody>
+
             </table>
+
         </div>
 
     </div>
+
 </div>
+
+
+<!-- =========================================================
+     RECHERCHE LOCALE
+     Pas de requête serveur : filtre uniquement les lignes
+     actuellement affichées.
+========================================================= -->
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const searchInput = document.getElementById("organizationSearch");
+    const table = document.getElementById("organizationTable");
+
+    if (!searchInput || !table) {
+        return;
+    }
+
+    const rows = table.querySelectorAll("tbody tr");
+
+    searchInput.addEventListener("input", function () {
+
+        const searchValue = this.value
+            .toLowerCase()
+            .trim();
+
+        rows.forEach(function (row) {
+
+            const rowText = row.textContent.toLowerCase();
+
+            if (rowText.includes(searchValue)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+
+        });
+
+    });
+
+});
+</script>
 
 {% endblock %}

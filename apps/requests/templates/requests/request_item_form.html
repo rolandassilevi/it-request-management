@@ -2,23 +2,87 @@
 
 {% block content %}
 
-<h2>{{ page_title|default:"Ajouter un produit" }}</h2>
+<div class="page-header">
+    <div>
+        <h1>{{ page_title|default:"Ajouter un produit" }}</h1>
+        <p>Ajoutez un produit à la demande {{ request_obj.reference }}</p>
+    </div>
+</div>
 
-<p class="text-muted">
-    Demande {{ request_obj.reference }}
-</p>
+<div class="form-card">
 
-<div class="card shadow-sm">
+    <div class="form-card-header">
+        <div class="form-card-icon">
+            <i class="bi bi-box-seam"></i>
+        </div>
 
-    <div class="card-body">
+        <div>
+            <h2>Informations du produit demandé</h2>
+            <p>Produit, quantité et informations complémentaires</p>
+        </div>
+    </div>
 
-        <form method="post">
+    <div class="form-divider"></div>
 
-            {% csrf_token %}
+    <form method="post">
+        {% csrf_token %}
 
-            {{ form.as_p }}
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
 
-            <button class="btn btn-primary">
+        <div class="form-grid">
+
+            <div class="form-group">
+                <label for="{{ form.product.id_for_label }}">
+                    Produit <span class="required">*</span>
+                </label>
+
+                {{ form.product }}
+
+                {% for error in form.product.errors %}
+                    <div class="field-error">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.quantity.id_for_label }}">
+                    Quantité <span class="required">*</span>
+                </label>
+
+                {{ form.quantity }}
+
+                {% for error in form.quantity.errors %}
+                    <div class="field-error">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+        </div>
+
+        <div class="form-group form-group-full">
+            <label for="{{ form.notes.id_for_label }}">
+                Notes
+            </label>
+
+            {{ form.notes }}
+
+            {% for error in form.notes.errors %}
+                <div class="field-error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="form-actions">
+
+            <a href="{% url 'requests:request_detail' request_obj.pk %}"
+               class="btn btn-outline-secondary">
+                Annuler
+            </a>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-check-lg"></i>
+
                 {% if form.instance.pk %}
                     Enregistrer
                 {% else %}
@@ -26,14 +90,9 @@
                 {% endif %}
             </button>
 
-            <a href="{% url 'requests:request_detail' request_obj.pk %}"
-               class="btn btn-outline-secondary">
-                Annuler
-            </a>
+        </div>
 
-        </form>
-
-    </div>
+    </form>
 
 </div>
 

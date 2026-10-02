@@ -2,32 +2,86 @@
 
 {% block content %}
 
-<h2>Retirer un produit</h2>
-
-<div class="card shadow-sm">
-    <div class="card-body">
-
-        <p>
-            Confirmer le retrait de
-            <strong>{{ item.product.name }}</strong>
-            de la demande
-            <strong>{{ item.request.reference }}</strong> ?
+<div class="page-header">
+    <div>
+        <h1>Retirer un produit</h1>
+        <p class="text-muted mb-0">
+            Demande {{ item.request.reference }}
         </p>
+    </div>
+</div>
 
-        <form method="post">
-            {% csrf_token %}
+<div class="form-card">
 
-            <button class="btn btn-danger">
-                Retirer
-            </button>
+    <div class="form-card-header">
+        <div class="form-card-icon text-danger">
+            <i class="bi bi-trash3"></i>
+        </div>
+
+        <div>
+            <h2>Confirmer le retrait</h2>
+            <p>Cette action retirera le produit de la demande.</p>
+        </div>
+    </div>
+
+    <div class="form-divider"></div>
+
+    <div class="alert alert-warning mb-4">
+        <div class="d-flex align-items-start gap-3">
+            <i class="bi bi-exclamation-triangle fs-4"></i>
+
+            <div>
+                <strong>Voulez-vous vraiment retirer ce produit ?</strong>
+
+                <div class="mt-2">
+                    <strong>{{ item.product.name }}</strong>
+                    sera retiré de la demande
+                    <strong>{{ item.request.reference }}</strong>.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="border rounded p-3 mb-4">
+        <div class="row g-3">
+
+            <div class="col-md-6">
+                <div class="text-muted small">Produit</div>
+                <strong>{{ item.product.name }}</strong>
+            </div>
+
+            <div class="col-md-3">
+                <div class="text-muted small">Quantité</div>
+                <strong>{{ item.quantity }}</strong>
+            </div>
+
+            <div class="col-md-3">
+                <div class="text-muted small">Demande</div>
+                <strong>{{ item.request.reference }}</strong>
+            </div>
+
+        </div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-actions">
 
             <a href="{% url 'requests:request_detail' item.request.pk %}"
                class="btn btn-outline-secondary">
                 Annuler
             </a>
-        </form>
 
-    </div>
+            <button type="submit" class="btn btn-danger">
+                <i class="bi bi-trash3 me-1"></i>
+                Retirer
+            </button>
+
+        </div>
+
+    </form>
+
 </div>
 
 {% endblock %}

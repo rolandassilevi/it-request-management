@@ -2,51 +2,244 @@
 
 {% block content %}
 
-<h2>{{ page_title }}</h2>
+<!-- En-tête -->
+<div class="mb-4">
 
-<p class="text-muted">
-    Informations de la demande
-</p>
+    <h2 class="mb-1">
+        {{ page_title }}
+    </h2>
 
-<div class="card shadow-sm">
-    <div class="card-body">
+    <p class="text-muted mb-0">
+        Enregistrez et suivez une demande de matériel
+    </p>
+
+</div>
+
+
+<div class="card shadow-sm request-form-card">
+
+    <div class="card-body p-4">
+
+        <!-- Titre de section -->
+        <div class="d-flex align-items-center gap-3 mb-4">
+
+            <div class="form-section-icon">
+                <i class="bi bi-file-earmark-text"></i>
+            </div>
+
+            <div>
+                <h4 class="mb-1">
+                    Informations de la demande
+                </h4>
+
+                <p class="text-muted small mb-0">
+                    Structure, interlocuteur et informations générales
+                </p>
+            </div>
+
+        </div>
+
+        <hr class="mb-4">
+
 
         <form method="post">
 
             {% csrf_token %}
 
-            {% for field in form %}
 
-                <div class="mb-3">
+            <!-- Erreurs générales -->
+            {% if form.non_field_errors %}
 
-                    <label class="form-label">
-                        {{ field.label }}
+                <div class="alert alert-danger">
+
+                    {% for error in form.non_field_errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+            <div class="row g-4">
+
+                <!-- Structure -->
+                <div class="col-md-6">
+
+                    <label for="{{ form.organization.id_for_label }}"
+                           class="form-label">
+
+                        Structure
+                        <span class="text-danger">*</span>
+
                     </label>
 
-                    {{ field }}
+                    {{ form.organization }}
 
-                    {% for error in field.errors %}
-                        <div class="text-danger small">
+                    {% for error in form.organization.errors %}
+                        <div class="text-danger small mt-1">
                             {{ error }}
                         </div>
                     {% endfor %}
 
                 </div>
 
-            {% endfor %}
 
-            <button class="btn btn-primary">
-                Enregistrer
-            </button>
+                <!-- Contact -->
+                <div class="col-md-6">
 
-            <a href="{% url 'requests:request_list' %}"
-               class="btn btn-outline-secondary">
-                Annuler
-            </a>
+                    <label for="{{ form.contact.id_for_label }}"
+                           class="form-label">
+
+                        Contact
+                        <span class="text-danger">*</span>
+
+                    </label>
+
+                    {{ form.contact }}
+
+                    {% for error in form.contact.errors %}
+                        <div class="text-danger small mt-1">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- Référence -->
+                <div class="col-md-6">
+
+                    <label for="{{ form.reference.id_for_label }}"
+                           class="form-label">
+
+                        Référence
+                        <span class="text-danger">*</span>
+
+                    </label>
+
+                    {{ form.reference }}
+
+                    {% for error in form.reference.errors %}
+                        <div class="text-danger small mt-1">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- Objet -->
+                <div class="col-md-6">
+
+                    <label for="{{ form.title.id_for_label }}"
+                           class="form-label">
+
+                        Objet
+                        <span class="text-danger">*</span>
+
+                    </label>
+
+                    {{ form.title }}
+
+                    {% for error in form.title.errors %}
+                        <div class="text-danger small mt-1">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- Statut -->
+                <div class="col-md-6">
+
+                    <label for="{{ form.status.id_for_label }}"
+                           class="form-label">
+
+                        Statut
+                        <span class="text-danger">*</span>
+
+                    </label>
+
+                    {{ form.status }}
+
+                    {% for error in form.status.errors %}
+                        <div class="text-danger small mt-1">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- Date souhaitée -->
+                <div class="col-md-6">
+
+                    <label for="{{ form.desired_date.id_for_label }}"
+                           class="form-label">
+                        Date souhaitée
+                    </label>
+
+                    {{ form.desired_date }}
+
+                    {% for error in form.desired_date.errors %}
+                        <div class="text-danger small mt-1">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- Description -->
+                <div class="col-12">
+
+                    <label for="{{ form.description.id_for_label }}"
+                           class="form-label">
+                        Description
+                    </label>
+
+                    {{ form.description }}
+
+                    {% for error in form.description.errors %}
+                        <div class="text-danger small mt-1">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <hr class="my-4">
+
+
+            <!-- Actions -->
+            <div class="d-flex justify-content-end gap-2">
+
+                <a href="{% url 'requests:request_list' %}"
+                   class="btn btn-outline-secondary">
+
+                    Annuler
+
+                </a>
+
+                <button type="submit"
+                        class="btn btn-primary">
+
+                    <i class="bi bi-check-lg me-1"></i>
+                    Enregistrer
+
+                </button>
+
+            </div>
 
         </form>
 
     </div>
+
 </div>
 
 {% endblock %}

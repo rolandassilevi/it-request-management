@@ -11,165 +11,261 @@
         rel="stylesheet"
     >
 
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/app.css' %}">
 </head>
 
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
+{% if user.is_authenticated %}
 
-        <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}">
-            ITRequest
-        </a>
+<div class="app-shell">
 
-        <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#mainNavbar"
-        >
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+    <aside class="app-sidebar">
 
-        <div class="collapse navbar-collapse" id="mainNavbar">
-
-            {% if user.is_authenticated %}
-            <div class="ms-auto d-flex align-items-center gap-3">
-
-                <span class="text-light">
-                    {{ user.username }}
+        <div class="sidebar-brand">
+            <a href="{% url 'dashboard' %}" class="brand-link">
+                <span class="brand-icon">
+                    <i class="bi bi-boxes"></i>
                 </span>
 
-                <form method="post" action="{% url 'logout' %}">
+                <span class="brand-name">
+                    ITRequest
+                </span>
+            </a>
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <!-- Tableau de bord -->
+            <a
+                class="sidebar-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+                href="{% url 'dashboard' %}"
+            >
+                <i class="bi bi-house-door-fill"></i>
+                <span>Tableau de bord</span>
+            </a>
+
+
+            <!-- Structures -->
+            <a
+                class="sidebar-link {% if request.resolver_match.namespace == 'organizations' and 'organization' in request.resolver_match.url_name %}active{% endif %}"
+                href="{% url 'organizations:organization_list' %}"
+            >
+                <i class="bi bi-buildings"></i>
+                <span>Structures</span>
+            </a>
+
+
+            <!-- Contacts -->
+            <a
+                class="sidebar-link {% if request.resolver_match.namespace == 'organizations' and 'contact' in request.resolver_match.url_name %}active{% endif %}"
+                href="{% url 'organizations:contact_list' %}"
+            >
+                <i class="bi bi-people"></i>
+                <span>Contacts</span>
+            </a>
+
+
+            <!-- Produits -->
+            <a
+                class="sidebar-link {% if request.resolver_match.namespace == 'catalog' and 'product' in request.resolver_match.url_name %}active{% endif %}"
+                href="{% url 'catalog:product_list' %}"
+            >
+                <i class="bi bi-box-seam"></i>
+                <span>Produits</span>
+            </a>
+
+
+            <!-- Catégories -->
+            <a
+                class="sidebar-link {% if request.resolver_match.namespace == 'catalog' and 'category' in request.resolver_match.url_name %}active{% endif %}"
+                href="{% url 'catalog:category_list' %}"
+            >
+                <i class="bi bi-tags"></i>
+                <span>Catégories</span>
+            </a>
+
+
+            <!-- Demandes -->
+            <a
+                class="sidebar-link {% if request.resolver_match.namespace == 'requests' %}active{% endif %}"
+                href="{% url 'requests:request_list' %}"
+            >
+                <i class="bi bi-file-earmark-text"></i>
+                <span>Demandes</span>
+            </a>
+
+
+            <!-- Cotations -->
+            <a
+                class="sidebar-link {% if request.resolver_match.namespace == 'quotations' %}active{% endif %}"
+                href="{% url 'quotations:quotation_list' %}"
+            >
+                <i class="bi bi-receipt"></i>
+                <span>Cotations</span>
+            </a>
+
+
+            {% if user.is_staff %}
+
+            <div class="sidebar-divider"></div>
+
+            <div class="sidebar-section-title">
+                ADMINISTRATION
+            </div>
+
+            <a
+                class="sidebar-link"
+                href="{% url 'admin:index' %}"
+                target="_blank"
+            >
+                <i class="bi bi-gear"></i>
+                <span>Administration</span>
+            </a>
+
+            {% endif %}
+
+        </nav>
+
+    </aside>
+
+
+    <!-- =====================================================
+         ZONE PRINCIPALE
+    ====================================================== -->
+    <div class="app-main">
+
+        <!-- =================================================
+             TOPBAR
+        ================================================== -->
+        <header class="app-topbar">
+
+            <div class="topbar-left">
+
+                <button
+                    class="sidebar-toggle d-lg-none"
+                    type="button"
+                    id="sidebarToggle"
+                    aria-label="Afficher le menu"
+                >
+                    <i class="bi bi-list"></i>
+                </button>
+
+                <div class="topbar-search">
+
+                    <i class="bi bi-search"></i>
+
+                    <input
+                        type="search"
+                        class="form-control"
+                        placeholder="Rechercher..."
+                        aria-label="Rechercher"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="topbar-right">
+
+                <button
+                    type="button"
+                    class="topbar-icon-button"
+                    aria-label="Notifications"
+                >
+                    <i class="bi bi-bell"></i>
+                </button>
+
+
+                <div class="user-profile">
+
+                    <div class="user-avatar">
+                        {{ user.username|slice:":2"|upper }}
+                    </div>
+
+                    <div class="user-details d-none d-sm-block">
+
+                        <div class="user-name">
+                            {{ user.get_full_name|default:user.username }}
+                        </div>
+
+                        <div class="user-role">
+                            {% if user.is_superuser %}
+                                Administrateur
+                            {% elif user.is_staff %}
+                                Gestionnaire
+                            {% else %}
+                                Utilisateur
+                            {% endif %}
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <form
+                    method="post"
+                    action="{% url 'logout' %}"
+                    class="logout-form"
+                >
                     {% csrf_token %}
 
                     <button
                         type="submit"
-                        class="btn btn-outline-light btn-sm"
+                        class="topbar-icon-button"
+                        title="Déconnexion"
+                        aria-label="Déconnexion"
                     >
-                        Déconnexion
+                        <i class="bi bi-box-arrow-right"></i>
                     </button>
+
                 </form>
 
             </div>
-            {% endif %}
 
-        </div>
-    </div>
-</nav>
+        </header>
 
 
-{% if user.is_authenticated %}
-
-<div class="container-fluid">
-    <div class="row">
-
-        <aside class="col-md-3 col-lg-2 sidebar p-0">
-
-            <nav class="nav flex-column py-3">
-
-                <a class="nav-link" href="{% url 'dashboard' %}">
-                    Tableau de bord
-                </a>
-
-                <div class="sidebar-heading">
-                    CLIENTS
-                </div>
-
-                <a
-                    class="nav-link"
-                    href="{% url 'organizations:organization_list' %}"
-                >
-                    Organisations
-                </a>
-
-                <a
-                    class="nav-link"
-                    href="{% url 'organizations:contact_list' %}"
-                >
-                    Contacts
-                </a>
-
-                <div class="sidebar-heading">
-                    CATALOGUE
-                </div>
-
-                <a class="nav-link" href="{% url 'catalog:product_list' %}">
-                    Produits
-                </a>
-
-                <a class="nav-link" href="{% url 'catalog:category_list' %}">
-                    Catégories
-                </a>
-
-                <div class="sidebar-heading">
-                    ACTIVITÉ
-                </div>
-
-                <a class="nav-link" href="{% url 'requests:request_list' %}">
-                    Demandes
-                </a>
-
-                <a class="nav-link" href="{% url 'quotations:quotation_list' %}">
-                    Cotations
-                </a>
-
-                {% if user.is_staff %}
-
-                <div class="sidebar-heading">
-                    SYSTÈME
-                </div>
-
-                <a
-                    class="nav-link"
-                    href="{% url 'admin:index' %}"
-                    target="_blank"
-                >
-                    Administration
-                </a>
-
-                {% endif %}
-
-            </nav>
-
-        </aside>
-
-
-        <main class="col-md-9 col-lg-10 px-md-4 py-4">
+        <!-- =================================================
+             CONTENU
+        ================================================== -->
+        <main class="app-content">
 
             {% if messages %}
-
                 {% for message in messages %}
+
                     <div
                         class="alert alert-{{ message.tags|default:'info' }}
                                alert-dismissible fade show"
+                        role="alert"
                     >
+
                         {{ message }}
 
                         <button
                             type="button"
                             class="btn-close"
                             data-bs-dismiss="alert"
+                            aria-label="Fermer"
                         ></button>
-                    </div>
-                {% endfor %}
 
-            {% endif %}
-
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show">
-                        {{ message }}
-                        <button
-                            type="button"
-                            class="btn-close"
-                            data-bs-dismiss="alert">
-                        </button>
                     </div>
+
                 {% endfor %}
             {% endif %}
+
 
             {% block content %}
             {% endblock %}
@@ -177,13 +273,24 @@
         </main>
 
     </div>
+
 </div>
+
+
+<!-- Overlay mobile -->
+<div
+    class="sidebar-overlay"
+    id="sidebarOverlay"
+></div>
+
 
 {% else %}
 
-<main>
+<main class="public-layout">
+
     {% block public_content %}
     {% endblock %}
+
 </main>
 
 {% endif %}
@@ -192,6 +299,35 @@
 <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js">
 </script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const sidebar = document.querySelector(".app-sidebar");
+        const toggle = document.getElementById("sidebarToggle");
+        const overlay = document.getElementById("sidebarOverlay");
+
+        if (toggle && sidebar && overlay) {
+
+            toggle.addEventListener("click", function () {
+                sidebar.classList.toggle("show");
+                overlay.classList.toggle("show");
+            });
+
+            overlay.addEventListener("click", function () {
+                sidebar.classList.remove("show");
+                overlay.classList.remove("show");
+            });
+
+        }
+
+    });
+</script>
+
+
+{% block extra_js %}
+{% endblock %}
 
 </body>
 </html>

@@ -4,26 +4,173 @@
 
 {% block content %}
 
-<div class="page-header">
+<!-- En-tête -->
+<div class="page-header mb-4">
+
     <div>
         <h1 class="h3 mb-1">Produits</h1>
+
         <p class="text-muted mb-0">
-            Catalogue de matériel informatique
+            Gérez votre catalogue de produits
         </p>
     </div>
 
     <a href="{% url 'catalog:product_create' %}"
        class="btn btn-primary">
-        + Nouveau produit
+
+        <i class="bi bi-plus-lg me-1"></i>
+        Ajouter un produit
+
     </a>
+
 </div>
 
+
+<!-- Recherche et filtres -->
+<div class="card mb-4">
+
+    <div class="card-body">
+
+        <form method="get"
+            class="row g-3 align-items-center">
+
+            <!-- Recherche -->
+            <div class="col-lg-4">
+
+                <div class="input-group">
+
+                    <span class="input-group-text bg-white border-end-0">
+                        <i class="bi bi-search text-muted"></i>
+                    </span>
+
+                    <input
+                        type="search"
+                        name="q"
+                        value="{{ query }}"
+                        class="form-control border-start-0"
+                        placeholder="Rechercher un produit..."
+                        aria-label="Rechercher un produit"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- Catégorie -->
+            <div class="col-lg-2">
+
+                <select name="category"
+                        class="form-select">
+
+                    <option value="">
+                        Toutes les catégories
+                    </option>
+
+                    {% for category in categories %}
+
+                        <option
+                            value="{{ category.pk }}"
+                            {% if selected_category == category.pk|stringformat:"s" %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ category.name }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- Statut -->
+            <div class="col-lg-2">
+
+                <select name="status"
+                        class="form-select">
+
+                    <option value="">
+                        Tous les statuts
+                    </option>
+
+                    <option value="active"
+                        {% if selected_status == "active" %}
+                            selected
+                        {% endif %}
+                    >
+                        Actifs
+                    </option>
+
+                    <option value="inactive"
+                        {% if selected_status == "inactive" %}
+                            selected
+                        {% endif %}
+                    >
+                        Inactifs
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- Actions de recherche -->
+            <div class="col-lg-3">
+
+                <div class="d-flex gap-2">
+
+                    <button type="submit"
+                            class="btn btn-primary">
+
+                        <i class="bi bi-search me-1"></i>
+                        Chercher
+
+                    </button>
+
+                    <a href="{% url 'catalog:product_list' %}"
+                    class="btn btn-outline-secondary">
+
+                        <i class="bi bi-arrow-counterclockwise me-1"></i>
+                        Réinitialiser
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- Compteur -->
+            <div class="col-lg-1 text-lg-end">
+
+                <span class="text-muted small text-nowrap">
+
+                    <i class="bi bi-box me-1"></i>
+
+                    {{ products|length }}
+
+                </span>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- Tableau -->
 <div class="card">
+
     <div class="table-responsive">
 
         <table class="table table-hover align-middle mb-0">
 
             <thead class="table-light">
+
                 <tr>
                     <th>SKU</th>
                     <th>Produit</th>
@@ -32,66 +179,149 @@
                     <th>Modèle</th>
                     <th class="text-end">Prix unitaire</th>
                     <th>Statut</th>
-                    <th></th>
+                    <th class="text-end">Actions</th>
                 </tr>
+
             </thead>
+
 
             <tbody>
 
             {% for product in products %}
 
                 <tr>
+
+                    <!-- SKU -->
                     <td>
                         <code>{{ product.sku }}</code>
                     </td>
 
+
+                    <!-- Produit -->
                     <td class="fw-semibold">
-                        {{ product.name }}
+
+                        <div class="d-flex align-items-center gap-2">
+
+                            <span class="text-primary">
+                                <i class="bi bi-box"></i>
+                            </span>
+
+                            {{ product.name }}
+
+                        </div>
+
                     </td>
 
+
+                    <!-- Catégorie -->
                     <td>
-                        {{ product.category.name }}
+
+                        <span class="d-inline-flex
+                                     align-items-center gap-1">
+
+                            <i class="bi bi-tag text-muted"></i>
+
+                            {{ product.category.name }}
+
+                        </span>
+
                     </td>
 
+
+                    <!-- Marque -->
                     <td>
                         {{ product.brand|default:"—" }}
                     </td>
 
+
+                    <!-- Modèle -->
                     <td>
                         {{ product.model|default:"—" }}
                     </td>
 
-                    <td class="text-end">
+
+                    <!-- Prix -->
+                    <td class="text-end fw-semibold">
                         {{ product.unit_price|floatformat:2 }} $
                     </td>
 
+
+                    <!-- Statut -->
                     <td>
+
                         {% if product.is_active %}
-                            <span class="badge text-bg-success">
+
+                            <span class="badge rounded-pill
+                                         bg-success-subtle
+                                         text-success">
                                 Actif
                             </span>
+
                         {% else %}
-                            <span class="badge text-bg-secondary">
+
+                            <span class="badge rounded-pill
+                                         bg-secondary-subtle
+                                         text-secondary">
                                 Inactif
                             </span>
+
                         {% endif %}
+
                     </td>
 
+
+                    <!-- Actions -->
                     <td class="text-end">
+
                         <a href="{% url 'catalog:product_update' product.pk %}"
                            class="btn btn-sm btn-outline-primary">
+
+                            <i class="bi bi-pencil me-1"></i>
                             Modifier
+
                         </a>
+
                     </td>
+
                 </tr>
+
 
             {% empty %}
 
                 <tr>
+
                     <td colspan="8"
-                        class="text-center text-muted py-4">
-                        Aucun produit enregistré.
+                        class="text-center py-5">
+
+                        <div class="text-muted mb-2">
+                            <i class="bi bi-box fs-3"></i>
+                        </div>
+
+                        {% if query or selected_category or selected_status %}
+
+                            <strong>
+                                Aucun produit trouvé.
+                            </strong>
+
+                            <div class="text-muted small mt-1">
+                                Modifiez vos critères de recherche.
+                            </div>
+
+                            <a href="{% url 'catalog:product_list' %}"
+                               class="btn btn-sm btn-outline-primary mt-3">
+                                Afficher tous les produits
+                            </a>
+
+                        {% else %}
+
+                            <strong>
+                                Aucun produit enregistré.
+                            </strong>
+
+                        {% endif %}
+
                     </td>
+
                 </tr>
 
             {% endfor %}
@@ -101,6 +331,7 @@
         </table>
 
     </div>
+
 </div>
 
 {% endblock %}

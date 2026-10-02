@@ -2,16 +2,135 @@
 
 {% block content %}
 
+<!-- En-tête -->
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h1>Cotations</h1>
-        <p class="text-muted">Offres commerciales préparées</p>
+        <h1 class="mb-1">Cotations</h1>
+        <p class="text-muted mb-0">
+            Suivez et gérez les offres commerciales
+        </p>
     </div>
 </div>
 
+
+<!-- Recherche et filtres -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+
+        <form method="get">
+            <div class="row g-3 align-items-center">
+
+                <!-- Recherche -->
+                <div class="col-lg-5 col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white">
+                            <i class="bi bi-search"></i>
+                        </span>
+
+                        <input
+                            type="text"
+                            name="q"
+                            class="form-control"
+                            placeholder="Rechercher une cotation..."
+                            value="{{ request.GET.q }}"
+                        >
+                    </div>
+                </div>
+
+
+                <!-- Statut -->
+                <div class="col-lg-3 col-md-6">
+                    <select
+                        name="status"
+                        class="form-select"
+                    >
+                        <option value="">Tous les statuts</option>
+
+                        <option
+                            value="DRAFT"
+                            {% if request.GET.status == "DRAFT" %}selected{% endif %}
+                        >
+                            Brouillon
+                        </option>
+
+                        <option
+                            value="SENT"
+                            {% if request.GET.status == "SENT" %}selected{% endif %}
+                        >
+                            Envoyée
+                        </option>
+
+                        <option
+                            value="ACCEPTED"
+                            {% if request.GET.status == "ACCEPTED" %}selected{% endif %}
+                        >
+                            Acceptée
+                        </option>
+
+                        <option
+                            value="REJECTED"
+                            {% if request.GET.status == "REJECTED" %}selected{% endif %}
+                        >
+                            Refusée
+                        </option>
+
+                        <option
+                            value="EXPIRED"
+                            {% if request.GET.status == "EXPIRED" %}selected{% endif %}
+                        >
+                            Expirée
+                        </option>
+                    </select>
+                </div>
+
+
+                <!-- Boutons -->
+                <div class="col-lg-4">
+                    <div class="d-flex gap-2">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+                            <i class="bi bi-search me-1"></i>
+                            Chercher
+                        </button>
+
+                        <a
+                            href="{% url 'quotations:quotation_list' %}"
+                            class="btn btn-outline-secondary"
+                        >
+                            Réinitialiser
+                        </a>
+
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- Compteur -->
+            <div class="d-flex justify-content-end mt-3 text-muted">
+                <span>
+                    <i class="bi bi-receipt me-2"></i>
+
+                    {{ quotations|length }}
+                    cotation{{ quotations|length|pluralize }}
+                </span>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+
+<!-- Tableau -->
 <div class="card shadow-sm">
     <div class="table-responsive">
+
         <table class="table table-hover align-middle mb-0">
+
             <thead>
                 <tr>
                     <th>Référence</th>
@@ -25,49 +144,126 @@
             </thead>
 
             <tbody>
+
                 {% for quotation in quotations %}
+
                 <tr>
+
+                    <!-- Référence -->
                     <td>
-                        <strong>{{ quotation.reference }}</strong>
+                        <strong>
+                            {{ quotation.reference }}
+                        </strong>
                     </td>
 
-                    <td>{{ quotation.request.reference }}</td>
 
+                    <!-- Demande -->
+                    <td>
+                        {{ quotation.request.reference }}
+                    </td>
+
+
+                    <!-- Organisation -->
                     <td>
                         {{ quotation.request.organization.name }}
                     </td>
 
+
+                    <!-- Statut -->
                     <td>
-                        <span class="badge text-bg-primary">
-                            {{ quotation.get_status_display }}
-                        </span>
+
+                        {% if quotation.status == "DRAFT" %}
+
+                            <span class="badge text-bg-secondary">
+                                {{ quotation.get_status_display }}
+                            </span>
+
+                        {% elif quotation.status == "SENT" %}
+
+                            <span class="badge text-bg-primary">
+                                {{ quotation.get_status_display }}
+                            </span>
+
+                        {% elif quotation.status == "ACCEPTED" %}
+
+                            <span class="badge text-bg-success">
+                                {{ quotation.get_status_display }}
+                            </span>
+
+                        {% elif quotation.status == "REJECTED" %}
+
+                            <span class="badge text-bg-danger">
+                                {{ quotation.get_status_display }}
+                            </span>
+
+                        {% elif quotation.status == "EXPIRED" %}
+
+                            <span class="badge text-bg-warning">
+                                {{ quotation.get_status_display }}
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge text-bg-light">
+                                {{ quotation.get_status_display }}
+                            </span>
+
+                        {% endif %}
+
                     </td>
 
-                    <td>{{ quotation.valid_until }}</td>
 
-                    <td class="text-end">
-                        {{ quotation.subtotal|floatformat:2 }} $
+                    <!-- Validité -->
+                    <td>
+                        {{ quotation.valid_until }}
                     </td>
 
+
+                    <!-- Montant -->
                     <td class="text-end">
+                        <strong>
+                            {{ quotation.subtotal|floatformat:2 }} $
+                        </strong>
+                    </td>
+
+
+                    <!-- Actions -->
+                    <td class="text-end">
+
                         <a
                             href="{% url 'quotations:quotation_detail' quotation.pk %}"
                             class="btn btn-sm btn-outline-primary"
                         >
+                            <i class="bi bi-eye me-1"></i>
                             Consulter
                         </a>
+
+                    </td>
+
+                </tr>
+
+
+                {% empty %}
+
+                <tr>
+                    <td
+                        colspan="7"
+                        class="text-center text-muted py-5"
+                    >
+
+                        <i class="bi bi-receipt fs-3 d-block mb-2"></i>
+
+                        Aucune cotation trouvée.
+
                     </td>
                 </tr>
 
-                {% empty %}
-                <tr>
-                    <td colspan="7" class="text-center text-muted py-4">
-                        Aucune cotation.
-                    </td>
-                </tr>
                 {% endfor %}
+
             </tbody>
+
         </table>
+
     </div>
 </div>
 

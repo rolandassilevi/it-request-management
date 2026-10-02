@@ -4,184 +4,290 @@
 
 {% block content %}
 
-<div class="page-header">
+<!-- =====================================================
+     PAGE HEADER
+     ===================================================== -->
+
+<div class="dashboard-header">
+
     <div>
-        <h1 class="h3 mb-1">Tableau de bord</h1>
+        <h1>Tableau de bord</h1>
 
-        <p class="text-muted mb-0">
-            Vue générale de l'activité ITRequest
+        <p>
+            Vue d'ensemble de l'activité ITRequest
         </p>
     </div>
-</div>
 
-
-<div class="row g-4">
-
-    <div class="col-sm-6 col-xl-3">
-        <div class="card h-100">
-            <div class="card-body">
-                <div class="text-muted">Organisations</div>
-
-                <div class="display-6 fw-bold">
-                    {{ organization_count }}
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="col-sm-6 col-xl-3">
-        <div class="card h-100">
-            <div class="card-body">
-                <div class="text-muted">Contacts</div>
-
-                <div class="display-6 fw-bold">
-                    {{ contact_count }}
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="col-sm-6 col-xl-3">
-        <div class="card h-100">
-            <div class="card-body">
-                <div class="text-muted">Catégories</div>
-
-                <div class="display-6 fw-bold">
-                    {{ category_count }}
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="col-sm-6 col-xl-3">
-        <div class="card h-100">
-            <div class="card-body">
-                <div class="text-muted">Produits</div>
-
-                <div class="display-6 fw-bold">
-                    {{ product_count }}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-5 g-3">
-        <div class="card shadow-sm h-100">
-            <div class="card-body">
-                <div class="text-muted">Demandes</div>
-
-                <div class="display-6 fw-bold">
-                    {{ request_count }}
-                </div>
-
-                <a href="{% url 'requests:request_list' %}"
-                class="stretched-link">
-                </a>
-            </div>
-        </div>
+    <div class="dashboard-period">
+        <i class="bi bi-calendar3"></i>
+        <span>Activité actuelle</span>
     </div>
 
 </div>
 
-<div class="card shadow-sm mt-4">
-    <div class="card-body">
 
-        <h4>Activité des demandes</h4>
+<!-- =====================================================
+     KPI PRINCIPAUX
+     ===================================================== -->
 
-        <div class="row mt-3">
+<div class="dashboard-kpi-grid">
 
-            <div class="col-md-4">
-                <div class="text-muted">Nouvelles</div>
-                <div class="fs-3 fw-bold">
-                    {{ new_request_count }}
-                </div>
-            </div>
+    <!-- Demandes -->
+    <a href="{% url 'requests:request_list' %}"
+       class="dashboard-kpi-card">
 
-            <div class="col-md-4">
-                <div class="text-muted">En cours</div>
-                <div class="fs-3 fw-bold">
-                    {{ in_progress_request_count }}
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="text-muted">Total</div>
-                <div class="fs-3 fw-bold">
-                    {{ request_count }}
-                </div>
-            </div>
-
+        <div class="dashboard-kpi-icon kpi-blue">
+            <i class="bi bi-file-earmark-text"></i>
         </div>
 
-    </div>
-</div>
+        <div>
+            <span class="dashboard-kpi-label">
+                Demandes
+            </span>
 
-<div class="col">
-    <div class="card shadow-sm h-100">
-        <div class="card-body">
-            <div class="text-muted">Cotations</div>
-            <div class="display-6 fw-bold">
+            <strong class="dashboard-kpi-value">
+                {{ request_count }}
+            </strong>
+
+            <small>
+                {{ new_request_count }} nouvelle{{ new_request_count|pluralize }}
+            </small>
+        </div>
+
+    </a>
+
+
+    <!-- Cotations -->
+    <a href="{% url 'quotations:quotation_list' %}"
+       class="dashboard-kpi-card">
+
+        <div class="dashboard-kpi-icon kpi-green">
+            <i class="bi bi-receipt"></i>
+        </div>
+
+        <div>
+            <span class="dashboard-kpi-label">
+                Cotations
+            </span>
+
+            <strong class="dashboard-kpi-value">
                 {{ quotation_count }}
-            </div>
+            </strong>
+
+            <small>
+                {{ active_quotation_count }} active{{ active_quotation_count|pluralize }}
+            </small>
         </div>
-    </div>
-</div>
 
-<div class="card shadow-sm mt-4">
-    <div class="card-body">
-        <h3>Activité des cotations</h3>
+    </a>
 
-        <div class="row mt-3">
 
-            <div class="col-md-3">
-                <div class="text-muted">Brouillons</div>
-                <div class="fs-3 fw-bold">
-                    {{ quotation_draft_count }}
-                </div>
-            </div>
 
-            <div class="col-md-3">
-                <div class="text-muted">Envoyées</div>
-                <div class="fs-3 fw-bold">
-                    {{ quotation_sent_count }}
-                </div>
-            </div>
+    <!-- Structures -->
+    <a href="{% url 'organizations:organization_list' %}"
+       class="dashboard-kpi-card">
 
-            <div class="col-md-3">
-                <div class="text-muted">Acceptées</div>
-                <div class="fs-3 fw-bold">
-                    {{ quotation_accepted_count }}
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="text-muted">Total</div>
-                <div class="fs-3 fw-bold">
-                    {{ quotation_count }}
-                </div>
-            </div>
-
+        <div class="dashboard-kpi-icon kpi-purple">
+            <i class="bi bi-buildings"></i>
         </div>
-    </div>
+
+        <div>
+            <span class="dashboard-kpi-label">
+                Structures
+            </span>
+
+            <strong class="dashboard-kpi-value">
+                {{ organization_count }}
+            </strong>
+
+            <small>
+                {{ contact_count }} contact{{ contact_count|pluralize }}
+            </small>
+        </div>
+
+    </a>
+
 </div>
 
 
-{% comment %} <div class="card mt-4">
-    <div class="card-body">
+<!-- =====================================================
+     ACTIVITÉ DES DEMANDES
+     ===================================================== -->
 
-        <h2 class="h5">
-            État du MVP
-        </h2>
+<div class="dashboard-section">
 
-        <p class="mb-0">
-            Les modules Organisations et Catalogue sont connectés
-            à PostgreSQL.
-        </p>
+    <div class="dashboard-section-header">
+
+        <div>
+            <h2>Demandes par statut</h2>
+            <p>Répartition actuelle des demandes</p>
+        </div>
+
+        <a href="{% url 'requests:request_list' %}"
+           class="dashboard-section-link">
+            Voir les demandes
+            <i class="bi bi-arrow-right"></i>
+        </a>
 
     </div>
-</div> {% endcomment %}
+
+
+    <div class="status-grid">
+
+        <div class="status-stat">
+            <span>Nouvelles</span>
+            <strong>{{ new_request_count }}</strong>
+            <div class="status-line status-blue"></div>
+        </div>
+
+        <div class="status-stat">
+            <span>À analyser</span>
+            <strong>{{ to_analyze_request_count }}</strong>
+            <div class="status-line status-cyan"></div>
+        </div>
+
+        <div class="status-stat">
+            <span>En cours</span>
+            <strong>{{ in_progress_request_count }}</strong>
+            <div class="status-line status-orange"></div>
+        </div>
+
+        <div class="status-stat">
+            <span>Offre envoyée</span>
+            <strong>{{ offer_sent_request_count }}</strong>
+            <div class="status-line status-purple"></div>
+        </div>
+
+        <div class="status-stat">
+            <span>Gagnées</span>
+            <strong>{{ won_request_count }}</strong>
+            <div class="status-line status-green"></div>
+        </div>
+
+        <div class="status-stat">
+            <span>Perdues</span>
+            <strong>{{ lost_request_count }}</strong>
+            <div class="status-line status-red"></div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     ACTIVITÉ DES COTATIONS
+     ===================================================== -->
+
+<div class="dashboard-section">
+
+    <div class="dashboard-section-header">
+
+        <div>
+            <h2>Activité des cotations</h2>
+            <p>Suivi du cycle commercial</p>
+        </div>
+
+        <a href="{% url 'quotations:quotation_list' %}"
+           class="dashboard-section-link">
+            Voir les cotations
+            <i class="bi bi-arrow-right"></i>
+        </a>
+
+    </div>
+
+
+    <div class="quotation-stat-grid">
+
+        <div class="quotation-stat">
+            <span>Brouillons</span>
+            <strong>{{ quotation_draft_count }}</strong>
+        </div>
+
+        <div class="quotation-stat">
+            <span>Envoyées</span>
+            <strong>{{ quotation_sent_count }}</strong>
+        </div>
+
+        <div class="quotation-stat">
+            <span>Acceptées</span>
+            <strong>{{ quotation_accepted_count }}</strong>
+        </div>
+
+        <div class="quotation-stat">
+            <span>Refusées</span>
+            <strong>{{ quotation_rejected_count }}</strong>
+        </div>
+
+        <div class="quotation-stat">
+            <span>Expirées</span>
+            <strong>{{ quotation_expired_count }}</strong>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     DONNÉES DE RÉFÉRENCE
+     ===================================================== -->
+
+<div class="dashboard-section">
+
+    <div class="dashboard-section-header">
+
+        <div>
+            <h2>Données de référence</h2>
+            <p>État actuel de la base ITRequest</p>
+        </div>
+
+    </div>
+
+
+    <div class="reference-grid">
+
+        <div class="reference-item">
+            <i class="bi bi-buildings"></i>
+
+            <div>
+                <span>Organisations</span>
+                <strong>{{ organization_count }}</strong>
+            </div>
+        </div>
+
+
+        <div class="reference-item">
+            <i class="bi bi-people"></i>
+
+            <div>
+                <span>Contacts</span>
+                <strong>{{ contact_count }}</strong>
+            </div>
+        </div>
+
+
+        <div class="reference-item">
+            <i class="bi bi-tags"></i>
+
+            <div>
+                <span>Catégories</span>
+                <strong>{{ category_count }}</strong>
+            </div>
+        </div>
+
+
+        <div class="reference-item">
+            <i class="bi bi-box-seam"></i>
+
+            <div>
+                <span>Produits</span>
+                <strong>{{ product_count }}</strong>
+            </div>
+        </div>
+
+    </div>
+
+</div>
 
 {% endblock %}
